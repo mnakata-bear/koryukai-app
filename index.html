@@ -435,6 +435,41 @@
   .field.eval{background:var(--surface-2);}
   .field.proposal{background:var(--accent-soft);border-color:transparent;}
   .field.proposal .label{color:var(--accent);}
+  .estimate-details{margin-top:12px;}
+  .estimate-summary{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    cursor:pointer;
+    list-style:none;
+    font-family:"JetBrains Mono",monospace;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.05em;
+    color:var(--accent);
+    -webkit-user-select:none;
+    user-select:none;
+  }
+  .estimate-summary::-webkit-details-marker{display:none;}
+  .estimate-summary::before{
+    content:"";
+    width:0;height:0;
+    flex:none;
+    border-left:4px solid var(--accent);
+    border-top:3.5px solid transparent;
+    border-bottom:3.5px solid transparent;
+    transition:transform .15s ease;
+  }
+  .estimate-details[open] .estimate-summary::before{transform:rotate(90deg);}
+  .estimate-val{
+    margin-top:8px;
+    padding-top:8px;
+    border-top:1px dashed var(--border);
+    font-size:14.5px;
+    line-height:1.75;
+    color:var(--text);
+    white-space:pre-wrap;
+  }
   .field.strategy{
     border-color:transparent;
   }
@@ -1001,6 +1036,46 @@
     38: "HP制作・LINE構築・AI化支援と重なる領域なので、案件の紹介や下請けし合える関係を提案したいところです。"
   };
 
+  var ESTIMATE_META = {
+    1: "管理システム単体で80万〜150万円、HPリニューアルは40万〜70万円ほど。両方セットなら120万〜220万円が目安です。",
+    2: "書類・期限管理システムで60万〜120万円、多言語AIチャット導入は30万〜60万円ほどが目安です。",
+    3: "具体的な開発提案というより紹介・協業ベースの話なので、見積りは案件内容次第です。",
+    4: "顧問先管理システムは80万〜150万円、HPリニューアルは40万〜80万円ほどが目安です（対応範囲次第で変動）。",
+    5: "進捗・請求管理システムは60万〜120万円、ポートフォリオサイト制作は30万〜50万円ほどが目安です。",
+    6: "ECサイト構築は50万〜100万円、店舗・本部の在庫売上管理システムは80万〜150万円ほどが目安です。",
+    7: "勤怠・工程管理システムは80万〜150万円、HPリニューアルは40万〜70万円ほどが目安です。",
+    8: "在庫・受発注管理システムは70万〜130万円、HP新規制作は30万〜50万円ほどが目安です。",
+    9: "現場管理システムは70万〜130万円、施工事例を見せるHP制作は30万〜50万円ほどが目安です。",
+    10: "手続き進捗管理システムは80万〜150万円、HPリニューアルは40万〜70万円ほどが目安です。",
+    11: "在庫・保守履歴管理システムは80万〜150万円、HPリニューアルは40万〜70万円ほどが目安です。",
+    12: "具体的な開発提案というより紹介・住み分けの話なので、見積りは案件内容次第です。",
+    13: "マッチング・稼働管理システムは90万〜180万円、求職者向けHP改善は30万〜60万円ほどが目安です。",
+    14: "求人進捗管理システムは70万〜130万円、AIによる求人原稿作成支援は30万〜60万円ほどが目安です。",
+    15: "進捗管理システムは70万〜130万円、多言語対応の集客HPは40万〜80万円ほどが目安です。",
+    16: "予約・顧客管理システムは50万〜100万円、HP＋ネット予約導線の整備は30万〜60万円ほどが目安です。",
+    17: "候補者管理システムは70万〜130万円、AIマッチング機能の追加は40万〜80万円ほどが目安です。",
+    18: "受講・スケジュール管理システムは70万〜130万円、多言語対応の集客HPリニューアルは40万〜80万円ほどが目安です。",
+    19: "査定・在庫管理システムは70万〜130万円、集客用HP・LP制作は30万〜60万円ほどが目安です。",
+    20: "複数事業をまたぐ予約・在庫管理システムは120万〜250万円、事業紹介HPの整理は40万〜80万円ほどが目安です（対象事業数次第で変動）。",
+    21: "LINEWORKS導入の延長で業務システム開発を提案する形なので、見積りは案件内容次第です。",
+    22: "査定・在庫・顧客管理システムは80万〜150万円、600業種分の取扱品目を見せる集客用HPは40万〜70万円ほどが目安です。",
+    23: "動画制作とのセット提案のため、こちら側の開発費用は案件内容次第です。簡易LP＋PR動画連携なら30万〜60万円程度からが目安です。",
+    24: "予約・問い合わせ管理システムは50万〜100万円ほど。デザインとのセット提案は案件内容次第で変動します。",
+    25: "会員・お見合いマッチング管理システムは80万〜150万円、集客用HPリニューアルは40万〜70万円ほどが目安です。",
+    26: "コンサル側の要件定義を受けての開発になるため、見積りは案件内容次第です。",
+    27: "手続き・相談状況管理システムは70万〜130万円、事務所HPの新規制作は30万〜50万円ほどが目安です。",
+    29: "得意分野を補い合う下請け・紹介ベースの話なので、見積りは案件内容次第です。",
+    30: "案件規模が大きくなりやすい領域です。部分連携でも数百万円規模になることが多く、まずは要件のヒアリングからの見積りになります。",
+    31: "ポートフォリオHPは30万〜50万円、制作案件の進捗管理システムは50万〜100万円ほどが目安です。",
+    32: "繁忙期の案件を紹介し合う関係の話なので、見積りは案件内容次第です。",
+    33: "案件の紹介・下請けベースの話なので、見積りは案件内容次第です。",
+    34: "記録・報告業務のAI効率化システムは80万〜150万円、施設紹介HPリニューアルは40万〜70万円ほどが目安です。",
+    35: "対象業務の範囲次第で変動しますが、部分的な管理システム化なら60万〜120万円程度からが目安です。",
+    36: "教育旅行・自治体案件向けの予約・顧客管理システムは90万〜180万円、集客用HP改善は40万〜80万円ほどが目安です。",
+    37: "案件の紹介・下請けベースの話なので、見積りは案件内容次第です。",
+    38: "案件の紹介・下請けベースの話なので、見積りは案件内容次第です。"
+  };
+
   function notesKey(eventId){ return "koryukai_notes_v1_" + eventId; }
   function freeMemoKey(eventId){ return "koryukai_freememo_v1_" + eventId; }
   function prepKey(eventId){ return "koryukai_prep_v1_" + eventId; }
@@ -1301,7 +1376,11 @@
     html += '<div class="field eval"><div class="label">事前リサーチ評価</div><div class="val">'+esc(co.eval || "情報なし")+'</div></div>';
 
     if(PROPOSAL_META[no]){
-      html += '<div class="field proposal"><div class="label">BearsSystemから提案できること</div><div class="val">'+esc(PROPOSAL_META[no])+'</div></div>';
+      html += '<div class="field proposal"><div class="label">BearsSystemから提案できること</div><div class="val">'+esc(PROPOSAL_META[no])+'</div>';
+      if(ESTIMATE_META[no]){
+        html += '<details class="estimate-details"><summary class="estimate-summary">概算お見積り（目安）</summary><div class="estimate-val">'+esc(ESTIMATE_META[no])+'</div></details>';
+      }
+      html += '</div>';
     }
 
     if(strat){
