@@ -1028,6 +1028,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.3 15.2c0 1 1 1.8 2.7 1.8s2.7-.7 2.7-1.9c0-2.6-5.4-1.2-5.4-3.7 0-1.2 1.1-1.9 2.7-1.9s2.7.7 2.7 1.7"/></svg>
       見積り
     </button>
+    <button class="tab-btn" data-tab="faq">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.2 9.3a2.8 2.8 0 1 1 4.3 2.4c-.9.6-1.5 1.1-1.5 2.3"/><circle cx="12" cy="16.8" r="0.6" fill="currentColor" stroke="none"/></svg>
+      Q&amp;A
+    </button>
   </nav>
 </div>
 
@@ -1195,6 +1199,45 @@
     "複数カテゴリを組み合わせる案件（例：HP＋業務システム＋AI）は、それぞれの目安を足し合わせつつ、まとめて依頼する場合の割引も相談可能です。"
   ];
 
+  var FAQ = [
+    {
+      cat: "AI・技術について",
+      items: [
+        {q:"AIって具体的に何ができるんですか？", a:"定型的な確認作業や資料作成、問い合わせ対応など、人がパターンに沿って繰り返しているタスクを、業務フローに合わせて自動化・効率化できます。「AIを入れる」こと自体が目的ではなく、実際の業務のどこが楽になるかを一緒に考えるところから始めます。"},
+        {q:"ChatGPTと何が違うんですか？", a:"ChatGPT単体は汎用的な対話ツールですが、私たちは御社の業務データやシステムと連携させた形で組み込みます。誰でも使える汎用AIを、御社専用の仕組みに落とし込むのが仕事です。"},
+        {q:"AIを導入したら人は減らせますか？", a:"人を減らすというより、手間のかかる部分をAIに任せて、人にしかできない判断や接客に時間を使えるようにする、という提案が多いです。"},
+        {q:"セキュリティは大丈夫ですか？社外にデータが漏れませんか？", a:"用途に応じて、外部に出さない構成（社内ネットワーク内での処理など）も含めて設計できます。取り扱うデータの重要度に応じてご相談ください。"}
+      ]
+    },
+    {
+      cat: "開発について",
+      items: [
+        {q:"開発にはどれくらい期間がかかりますか？", a:"簡単なホームページなら2〜4週間、業務システムは規模により1〜3ヶ月程度が目安です。まず小さく作って試すスモールスタートもよくご提案します。"},
+        {q:"途中で仕様を変更することはできますか？", a:"できます。特に小〜中規模の案件は、進めながら調整することも多いです。大きな変更は追加のお見積りになる場合があります。"},
+        {q:"既存のシステムやホームページの改修だけでも頼めますか？", a:"もちろんです。ゼロから作るだけでなく、今あるものの一部だけ直す・機能を足すご依頼にも多く対応しています。"},
+        {q:"プログラミングの知識が全くないのですが大丈夫ですか？", a:"全く問題ありません。専門用語を使わずに「今何に困っているか」からヒアリングして、技術的な部分はこちらで設計します。"}
+      ]
+    },
+    {
+      cat: "料金・進め方について",
+      items: [
+        {q:"料金はどれくらいかかりますか？", a:"内容によって大きく変わりますが、このアプリの「見積り」タブにジャンル別のざっくりした目安を載せています。まずは要件を伺ってから正式な見積りをお出しします。"},
+        {q:"見積りは無料ですか？", a:"はい、要件のヒアリングと概算見積りまでは無料でご相談いただけます。"},
+        {q:"依頼したらどういう流れで進みますか？", a:"まずヒアリングで課題を整理し、概算見積り→正式なご依頼→設計・開発→納品・運用サポート、という流れが基本です。"},
+        {q:"支払いのタイミングはどうなっていますか？", a:"案件規模によりますが、着手金＋納品時のお支払いなど、分割でのご相談も可能です。"},
+        {q:"保守や運用まで任せられますか？", a:"対応できます。月額の保守プランをご用意していて、公開後の軽微な修正やご相談にも対応します。"}
+      ]
+    },
+    {
+      cat: "会社について",
+      items: [
+        {q:"どれくらいの規模の会社ですか？", a:"少人数で機動力を活かして動いている会社です。大手にはできない、小回りの利いた対応が強みです。"},
+        {q:"どんな業種の実績が多いですか？", a:"業務改善やホームページ制作を中心に、業種を問わず幅広くご相談いただいています（具体的な実績は当日の会話で補足）。"},
+        {q:"なぜAIとシステム開発を両方やっているんですか？", a:"システムを作るだけでなく、その中身をAIでどう賢くできるかまで一貫して提案できるのが強みだからです。別々の会社に頼むと連携の手間がかかりますが、うちなら一気通貫でできます。"}
+      ]
+    }
+  ];
+
   function notesKey(eventId){ return "koryukai_notes_v1_" + eventId; }
   function freeMemoKey(eventId){ return "koryukai_freememo_v1_" + eventId; }
   function prepKey(eventId){ return "koryukai_prep_v1_" + eventId; }
@@ -1337,6 +1380,8 @@
       main.innerHTML = renderSchedule();
     }else if(state.tab === "pricing"){
       main.innerHTML = renderPricingTab();
+    }else if(state.tab === "faq"){
+      main.innerHTML = renderFaqTab();
     }else{
       main.innerHTML = renderMemoTab();
     }
@@ -1682,6 +1727,22 @@
       html += '<li><span class="ti">'+(i+1)+'</span><span>'+esc(t)+'</span></li>';
     });
     html += '</ul>';
+    html += '</section>';
+    return html;
+  }
+
+  function renderFaqTab(){
+    var html = '<section class="view">';
+    html += '<h2 class="section-title" style="margin-top:2px;">よくある質問と回答</h2>';
+    html += '<p class="pricing-intro">当日聞かれそうな質問と回答例です。タップで開いて、話す前にサッと目を通しておこう。</p>';
+    FAQ.forEach(function(group){
+      html += '<div class="price-card">';
+      html += '  <p class="price-cat">'+esc(group.cat)+'</p>';
+      group.items.forEach(function(it){
+        html += '  <details class="estimate-details faq-details"><summary class="estimate-summary">Q. '+esc(it.q)+'</summary><div class="estimate-val">'+esc(it.a)+'</div></details>';
+      });
+      html += '</div>';
+    });
     html += '</section>';
     return html;
   }
