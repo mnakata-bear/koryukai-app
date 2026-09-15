@@ -433,6 +433,8 @@
   .field .val{font-size:16.5px;line-height:1.75;color:var(--text);white-space:pre-wrap;}
   .field .val a{color:var(--accent);word-break:break-all;}
   .field.eval{background:var(--surface-2);}
+  .field.followup{background:var(--surface-2);}
+  .field.followup .followup-toggle{margin-bottom:10px;}
   .field.proposal{background:var(--accent-soft);border-color:transparent;}
   .field.proposal .label{color:var(--accent);}
   .estimate-details{margin-top:12px;}
@@ -1222,6 +1224,20 @@
   function saveTalked(eventId, obj){
     try{ localStorage.setItem(talkedKey(eventId), JSON.stringify(obj)); }catch(e){}
   }
+  function followupKey(eventId){ return "koryukai_followup_v1_" + eventId; }
+  function loadFollowup(eventId){
+    try{ return JSON.parse(localStorage.getItem(followupKey(eventId)) || "{}"); }catch(e){ return {}; }
+  }
+  function saveFollowup(eventId, obj){
+    try{ localStorage.setItem(followupKey(eventId), JSON.stringify(obj)); }catch(e){}
+  }
+  function followupKey(eventId){ return "koryukai_followup_v1_" + eventId; }
+  function loadFollowup(eventId){
+    try{ return JSON.parse(localStorage.getItem(followupKey(eventId)) || "{}"); }catch(e){ return {}; }
+  }
+  function saveFollowup(eventId, obj){
+    try{ localStorage.setItem(followupKey(eventId), JSON.stringify(obj)); }catch(e){}
+  }
 
   function formatDate(d){
     var p = d.split("-");
@@ -1234,6 +1250,7 @@
   var notes = {};
   var prep = {};
   var talked = {};
+  var followed = {};
 
   var state = { screen:"home", eventId:null, tab:"search", query:"", filter:"all", selectedNo:null, modalKey:null, modalEditing:false, hideTalked:false };
 
@@ -1250,6 +1267,7 @@
     var savedPrep = loadPrep(ev.id);
     for(var k2 in savedPrep){ prep[k2] = savedPrep[k2]; }
     talked = loadTalked(ev.id);
+    followed = loadFollowup(ev.id);
     state.screen = "app";
     state.eventId = ev.id;
     state.tab = "search";
@@ -1489,6 +1507,18 @@
     html += '  '+(isTalked ? "話した（タップで未対応に戻す）" : "まだ話していない（タップで話した済みに）");
     html += '</button>';
 
+    if(isTalked){
+      var isFollowed = !!followed[co.no];
+      html += '<div class="field followup">';
+      html += '<div class="label">フォローアップ</div>';
+      html += '<button class="talk-toggle followup-toggle'+(isFollowed?' checked':'')+'" data-followup="'+co.no+'" aria-pressed="'+(isFollowed?'true':'false')+'">';
+      html += '  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 13 10 18 19 7"/></svg>';
+      html += '  '+(isFollowed ? "お礼済み（タップで未対応に戻す）" : "まだお礼していない（タップでお礼済みに）");
+      html += '</button>';
+      html += '<button class="export-btn followup-email-btn" data-emailgen="'+co.no+'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="10" height="4" rx="1"/><path d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/></svg><span id="followupEmailLabel_'+co.no+'">お礼メール文面をコピー</span></button>';
+      html += '</div>';
+    }
+
     html += '<div class="field"><div class="label">事業内容</div><div class="val">'+esc(co.biz)+'</div></div>';
     html += '<div class="field"><div class="label">交流希望</div><div class="val">'+esc(co.wish || "特になし")+'</div></div>';
     html += '<div class="field"><div class="label">ホームページ</div><div class="val">'+urlField(co.url)+'</div></div>';
@@ -1682,6 +1712,18 @@
       });
     }
 
+    var pendingFollowups = DATA.companies.filter(function(co){ return talked[co.no] && !followed[co.no]; });
+    html += '<h2 class="section-title">フォローアップ（お礼が必要な相手） ('+pendingFollowups.length+')</h2>';
+    if(talkedCount() === 0){
+      html += '<div class="empty">まだ「話した」に登録した事業所がありません。<br>検索タブで話した事業所にチェックを入れると、ここにお礼が必要な相手が一覧されます。</div>';
+    }else if(pendingFollowups.length === 0){
+      html += '<div class="empty">話した事業所は全てフォロー済みです。お疲れさまでした！</div>';
+    }else{
+      html += '<div class="list">';
+      pendingFollowups.forEach(function(co){ html += renderCompanyCard(co); });
+      html += '</div>';
+    }
+
     html += '<h2 class="section-title">書き出し</h2>';
     html += '<div class="export-card">';
     html += '  <p class="export-desc">当日フリーメモ・準備メモ・事業所別メモをまとめてテキストにします。終了後の振り返りやお礼連絡にどうぞ。</p>';
@@ -1763,21 +1805,56 @@
     }
   }
 
+  function copyTextToClipboard(text, onDone){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ onDone(true); }, function(){ onDone(fallbackCopy(text)); });
+    }else{
+      onDone(fallbackCopy(text));
+    }
+  }
+
   function copyExport(){
     var text = buildExportText();
     var label = document.getElementById("exportBtnLabel");
-    function done(ok){
+    copyTextToClipboard(text, function(ok){
       if(!label) return;
       label.textContent = ok ? "コピーしました" : "コピーできませんでした（手動で選択してください）";
       setTimeout(function(){
         if(label) label.textContent = "メモを書き出す（コピー）";
       }, 2200);
-    }
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ done(fallbackCopy(text)); });
-    }else{
-      done(fallbackCopy(text));
-    }
+    });
+  }
+
+  function buildFollowUpEmail(co){
+    var lines = [];
+    lines.push(co.name+" 御中");
+    lines.push("");
+    lines.push("お世話になっております。");
+    lines.push("株式会社BearsSystemの［お名前］です。");
+    lines.push("");
+    lines.push("先日は交流会にて貴重なお時間をいただき、誠にありがとうございました。");
+    lines.push("［当日お話しした内容を一言添える］");
+    lines.push("");
+    lines.push("またぜひ詳しくお話しできる機会をいただけますと幸いです。");
+    lines.push("今後ともどうぞよろしくお願いいたします。");
+    lines.push("");
+    lines.push("株式会社BearsSystem");
+    lines.push("［お名前］");
+    return lines.join("\n");
+  }
+
+  function copyFollowupEmail(no){
+    var co = DATA.companies.filter(function(c){ return c.no === no; })[0];
+    if(!co) return;
+    var text = buildFollowUpEmail(co);
+    var label = document.getElementById("followupEmailLabel_"+no);
+    copyTextToClipboard(text, function(ok){
+      if(!label) return;
+      label.textContent = ok ? "コピーしました" : "コピーできませんでした";
+      setTimeout(function(){
+        if(label) label.textContent = "お礼メール文面をコピー";
+      }, 2200);
+    });
   }
 
   function bindDynamic(){
@@ -1823,6 +1900,22 @@
         talked[no] = !talked[no];
         saveTalked(state.eventId, talked);
         render();
+      });
+    });
+    document.querySelectorAll("[data-followup]").forEach(function(el){
+      el.addEventListener("click", function(ev){
+        ev.stopPropagation();
+        var no = parseInt(el.dataset.followup, 10);
+        followed[no] = !followed[no];
+        saveFollowup(state.eventId, followed);
+        render();
+      });
+    });
+    document.querySelectorAll("[data-emailgen]").forEach(function(el){
+      el.addEventListener("click", function(ev){
+        ev.stopPropagation();
+        var no = parseInt(el.dataset.emailgen, 10);
+        copyFollowupEmail(no);
       });
     });
     var hideTalkedCb = document.getElementById("hideTalkedCheckbox");
