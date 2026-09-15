@@ -1,0 +1,1739 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>事業所名鑑</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3452D9">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="事業所名鑑">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root{
+    --bg:#F3F5F8;
+    --surface:#FFFFFF;
+    --surface-2:#EAEDF3;
+    --surface-3:#DDE1E9;
+    --text:#1A1E28;
+    --text-muted:#5B6475;
+    --text-faint:#8891A0;
+    --border:#DFE3EA;
+    --accent:#3452D9;
+    --accent-ink:#FFFFFF;
+    --accent-soft:#E9EDFF;
+    --pri-a:#0E8577;
+    --pri-a-soft:#E1F4F0;
+    --pri-b:#A9690A;
+    --pri-b-soft:#FBF0D9;
+    --pri-c:#6C58AC;
+    --pri-c-soft:#EFEAFB;
+    --pri-none:#8992A3;
+    --pri-none-soft:#EDEFF3;
+    --danger:#B8402E;
+    --shadow:0 1px 2px rgba(20,24,32,.06),0 10px 26px -14px rgba(20,24,32,.22);
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#11141B;
+      --surface:#1A1E28;
+      --surface-2:#212633;
+      --surface-3:#2B3040;
+      --text:#E7E9F0;
+      --text-muted:#9BA3B7;
+      --text-faint:#6E7690;
+      --border:#2A2F40;
+      --accent:#7C93FF;
+      --accent-ink:#0E1220;
+      --accent-soft:#212A47;
+      --pri-a:#3FCBB2;
+      --pri-a-soft:#153531;
+      --pri-b:#E7B356;
+      --pri-b-soft:#3A2C10;
+      --pri-c:#B3A1EE;
+      --pri-c-soft:#2A2450;
+      --pri-none:#8791A8;
+      --pri-none-soft:#212633;
+      --danger:#E28677;
+      --shadow:0 1px 2px rgba(0,0,0,.35),0 14px 30px -16px rgba(0,0,0,.65);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#11141B;
+    --surface:#1A1E28;
+    --surface-2:#212633;
+    --surface-3:#2B3040;
+    --text:#E7E9F0;
+    --text-muted:#9BA3B7;
+    --text-faint:#6E7690;
+    --border:#2A2F40;
+    --accent:#7C93FF;
+    --accent-ink:#0E1220;
+    --accent-soft:#212A47;
+    --pri-a:#3FCBB2;
+    --pri-a-soft:#153531;
+    --pri-b:#E7B356;
+    --pri-b-soft:#3A2C10;
+    --pri-c:#B3A1EE;
+    --pri-c-soft:#2A2450;
+    --pri-none:#8791A8;
+    --pri-none-soft:#212633;
+    --danger:#E28677;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 14px 30px -16px rgba(0,0,0,.65);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  [hidden]{display:none!important;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  #app{
+    max-width:560px;
+    margin:0 auto;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+  }
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    padding:14px 18px 12px;
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .topbar h1{
+    font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic Medium",sans-serif;
+    font-weight:900;
+    font-size:19px;
+    letter-spacing:.01em;
+    margin:0;
+    color:var(--text);
+  }
+  .topbar .sub{
+    font-size:11.5px;
+    color:var(--text-faint);
+    font-weight:500;
+  }
+  main{
+    flex:1 1 auto;
+    padding:0 0 92px;
+  }
+  section.view{padding:16px 18px 8px;}
+  h2.section-title{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:14px;
+    color:var(--text-muted);
+    margin:20px 0 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  h2.section-title:first-child{margin-top:2px;}
+
+  /* search + filters */
+  .search-wrap{
+    position:sticky;
+    top:53px;
+    z-index:15;
+    background:var(--bg);
+    padding:14px 18px 10px;
+    border-bottom:1px solid var(--border);
+  }
+  .search-field{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:10px 12px;
+    box-shadow:var(--shadow);
+  }
+  .search-field svg{flex:none;color:var(--text-faint);}
+  .search-field input{
+    border:none;
+    outline:none;
+    background:transparent;
+    color:var(--text);
+    font-family:inherit;
+    font-size:16px;
+    width:100%;
+  }
+  .search-field input::placeholder{color:var(--text-faint);}
+  .chips{
+    display:flex;
+    gap:7px;
+    margin-top:10px;
+    overflow-x:auto;
+    padding-bottom:2px;
+  }
+  .chip{
+    flex:none;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    padding:7px 12px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text-muted);
+  }
+  .chip .n{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    opacity:.75;
+  }
+  .chip.active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+  .chip.active .n{opacity:.85;}
+  .chip[data-p="A"].active{background:var(--pri-a);border-color:var(--pri-a);}
+  .chip[data-p="B"].active{background:var(--pri-b);border-color:var(--pri-b);}
+  .chip[data-p="C"].active{background:var(--pri-c);border-color:var(--pri-c);}
+  .chip[data-p="none"].active{background:var(--pri-none);border-color:var(--pri-none);}
+
+  .group-header{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:20px 18px 8px;
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    color:var(--text-muted);
+  }
+  .group-header .gdot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .group-header .gcount{
+    margin-left:auto;
+    font-family:"JetBrains Mono",monospace;
+    font-weight:500;
+    font-size:11.5px;
+    color:var(--text-faint);
+  }
+
+  /* list */
+  .list{display:flex;flex-direction:column;gap:9px;padding:14px 18px 4px;}
+  .card{
+    display:flex;
+    align-items:stretch;
+    gap:12px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:12px 14px;
+    text-align:left;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .card .stripe{width:5px;border-radius:4px;flex:none;background:var(--pri-none);opacity:.55;}
+  .card.pA .stripe,.card.pB .stripe,.card.pC .stripe{opacity:1;}
+  .card.pA .stripe{background:var(--pri-a);}
+  .card.pB .stripe{background:var(--pri-b);}
+  .card.pC .stripe{background:var(--pri-c);}
+  .card-body{flex:1 1 auto;min-width:0;}
+  .card-top{display:flex;align-items:center;gap:8px;margin-bottom:3px;}
+  .talk-check{
+    flex:none;
+    width:21px;height:21px;
+    margin-left:auto;
+    border-radius:50%;
+    border:1.5px solid var(--border);
+    background:var(--surface);
+    color:transparent;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    padding:0;
+  }
+  .talk-check.checked{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:var(--accent-ink);
+  }
+  .talk-toggle{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:11px;
+    border-radius:12px;
+    border:1.5px solid var(--border);
+    background:var(--surface);
+    color:var(--text-muted);
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:13px;
+    margin-bottom:14px;
+    cursor:pointer;
+  }
+  .talk-toggle.checked{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:11px;
+  }
+  .toggle-row label{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    color:var(--text-muted);
+    cursor:pointer;
+  }
+  .toggle-row input[type="checkbox"]{
+    accent-color:var(--accent);
+    width:15px;height:15px;
+  }
+  .progress-stat{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    color:var(--text-faint);
+  }
+  .no-tag{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:700;
+    font-size:11px;
+    color:var(--text-faint);
+  }
+  .pbadge{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:700;
+    font-size:11px;
+    width:21px;
+    height:21px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:none;
+  }
+  .pbadge.A{background:var(--pri-a-soft);color:var(--pri-a);}
+  .pbadge.B{background:var(--pri-b-soft);color:var(--pri-b);}
+  .pbadge.C{background:var(--pri-c-soft);color:var(--pri-c);}
+  .card-name{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:16.5px;
+    color:var(--text);
+    margin:0 0 3px;
+  }
+  .card-biz{
+    font-size:14px;
+    color:var(--text-muted);
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    line-height:1.5;
+  }
+  .card-chev{
+    align-self:center;
+    color:var(--text-faint);
+    flex:none;
+  }
+  .note-flag{
+    display:inline-flex;
+    align-items:center;
+    gap:3px;
+    font-size:10.5px;
+    color:var(--accent);
+    margin-top:4px;
+    font-weight:600;
+  }
+  .empty{
+    padding:40px 18px;
+    text-align:center;
+    color:var(--text-faint);
+    font-size:14.5px;
+    line-height:1.8;
+  }
+
+  /* detail */
+  .detail{padding:8px 18px 8px;}
+  .back-btn{
+    position:sticky;
+    top:53px;
+    z-index:12;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    width:calc(100% + 36px);
+    margin:0 -18px 4px;
+    background:var(--bg);
+    border:none;
+    color:var(--accent);
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    padding:8px 18px 10px;
+    cursor:pointer;
+  }
+  .detail-head{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .detail-head .tags{display:flex;gap:6px;align-items:center;margin-bottom:6px;}
+  .detail-name{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:900;
+    font-size:22px;
+    line-height:1.35;
+    margin:0;
+    text-wrap:balance;
+  }
+  .field{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    box-shadow:var(--shadow);
+  }
+  .field .label{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.06em;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .field .val{font-size:16.5px;line-height:1.75;color:var(--text);white-space:pre-wrap;}
+  .field .val a{color:var(--accent);word-break:break-all;}
+  .field.eval{background:var(--surface-2);}
+  .field.proposal{background:var(--accent-soft);border-color:transparent;}
+  .field.proposal .label{color:var(--accent);}
+  .field.strategy{
+    border-color:transparent;
+  }
+  .field.strategy.A{background:var(--pri-a-soft);}
+  .field.strategy.B{background:var(--pri-b-soft);}
+  .field.strategy.C{background:var(--pri-c-soft);}
+  .field.strategy .label{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .field.strategy .plabel{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    text-transform:none;
+    font-weight:700;
+    font-size:14px;
+  }
+  .field.strategy.A .plabel{color:var(--pri-a);}
+  .field.strategy.B .plabel{color:var(--pri-b);}
+  .field.strategy.C .plabel{color:var(--pri-c);}
+  .field.strategy .sub-label{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;
+    color:var(--text-faint);
+    margin:10px 0 4px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+  }
+  .field.strategy .sub-label:first-of-type{margin-top:2px;}
+
+  textarea.memo-input{
+    width:100%;
+    min-height:88px;
+    resize:vertical;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:inherit;
+    font-size:16px;
+    line-height:1.6;
+    padding:10px 12px;
+    outline:none;
+  }
+  textarea.memo-input:focus{border-color:var(--accent);}
+  .memo-save-state{
+    font-size:11px;
+    color:var(--text-faint);
+    margin-top:6px;
+    height:14px;
+  }
+
+  /* schedule tab */
+  .timeline{position:relative;padding-left:22px;margin:4px 0 6px;}
+  .timeline::before{
+    content:"";
+    position:absolute;
+    left:5px;top:6px;bottom:6px;
+    width:2px;
+    background:var(--border);
+  }
+  .round{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    box-shadow:var(--shadow);
+  }
+  .round::before{
+    content:"";
+    position:absolute;
+    left:-22px;top:18px;
+    width:12px;height:12px;
+    border-radius:50%;
+    background:var(--accent);
+    border:2px solid var(--bg);
+  }
+  .round-title{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:15.5px;
+    margin:0 0 10px;
+  }
+  .agenda-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+    padding:7px 0;
+    border-top:1px solid var(--border);
+    font-size:14.5px;
+  }
+  .agenda-row.first{border-top:none;}
+  .agenda-row .t{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11.5px;
+    color:var(--text-faint);
+    flex:none;
+    padding-top:1px;
+  }
+  .agenda-row .d{color:var(--text);text-align:right;}
+  .agenda-row .d b{font-weight:700;}
+  button.agenda-row{
+    width:100%;
+    border:none;
+    background:none;
+    margin:0;
+    font:inherit;
+    color:inherit;
+    -webkit-appearance:none;
+    appearance:none;
+    cursor:pointer;
+    border-radius:8px;
+  }
+  .agenda-row.agenda-click:active{background:var(--surface-2);}
+  .chev{flex:none;color:var(--text-faint);margin-top:2px;display:inline-flex;}
+  .prep-hint{
+    display:block;
+    margin-top:4px;
+    font-size:11px;
+    color:var(--accent);
+    font-weight:600;
+  }
+  .prep-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:6px 16px 2px;
+    margin-bottom:8px;
+    box-shadow:var(--shadow);
+  }
+  .modal-backdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(10,12,18,.5);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:100;
+  }
+  .modal-sheet{
+    width:100%;
+    max-width:520px;
+    max-height:min(76vh,76dvh);
+    overflow-y:auto;
+    background:var(--surface);
+    border-radius:18px;
+    padding:16px 18px 18px;
+    box-shadow:0 16px 44px rgba(0,0,0,.32);
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .modal-sheet{ animation:sheetIn .16s ease-out; }
+  }
+  @keyframes sheetIn{
+    from{ transform:scale(.96); opacity:0; }
+    to{ transform:scale(1); opacity:1; }
+  }
+  .modal-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  .modal-head h3{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:17px;
+    line-height:1.4;
+    margin:0;
+    text-wrap:balance;
+  }
+  .modal-close{
+    flex:none;
+    width:30px;height:30px;
+    border-radius:9px;
+    border:none;
+    background:var(--surface-2);
+    color:var(--text-muted);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  .modal-textarea{min-height:220px;}
+  .modal-view-text{
+    font-size:16px;
+    line-height:1.85;
+    color:var(--text);
+    white-space:pre-wrap;
+    margin-bottom:18px;
+  }
+  .modal-view-empty{
+    font-size:14.5px;
+    color:var(--text-faint);
+    line-height:1.7;
+    margin-bottom:18px;
+  }
+  .modal-edit-btn{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    padding:11px;
+    border-radius:12px;
+    border:none;
+    background:var(--accent);
+    color:var(--accent-ink);
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .modal-actions{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:2px;
+  }
+  .modal-done-btn{
+    flex:none;
+    padding:9px 20px;
+    border-radius:10px;
+    border:none;
+    background:var(--accent);
+    color:var(--accent-ink);
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    cursor:pointer;
+  }
+  .move-note{
+    text-align:center;
+    color:var(--text-faint);
+    font-size:12px;
+    margin:2px 0 12px;
+    position:relative;
+  }
+  .part2{
+    background:var(--accent-soft);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:8px;
+  }
+  .part2 .round-title{color:var(--accent);}
+  .tips{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .tips li{
+    display:flex;
+    gap:10px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px 14px;
+    font-size:14.5px;
+    line-height:1.65;
+    box-shadow:var(--shadow);
+  }
+  .tips li .ti{
+    flex:none;
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--accent-soft);
+    color:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"JetBrains Mono",monospace;
+    font-weight:700;
+    font-size:11px;
+  }
+
+  /* memo tab */
+  .free-memo-box{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px 16px;
+    box-shadow:var(--shadow);
+    margin-bottom:6px;
+  }
+  .free-memo-box textarea{
+    width:100%;
+    min-height:120px;
+    border:none;
+    outline:none;
+    resize:vertical;
+    background:transparent;
+    color:var(--text);
+    font-family:inherit;
+    font-size:16px;
+    line-height:1.7;
+  }
+  .note-card{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:12px 14px;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    margin-bottom:9px;
+  }
+  .note-card .stripe{width:4px;border-radius:3px;align-self:stretch;flex:none;background:var(--pri-none);}
+  .note-card.pA .stripe{background:var(--pri-a);}
+  .note-card.pB .stripe{background:var(--pri-b);}
+  .note-card.pC .stripe{background:var(--pri-c);}
+  .note-card .name{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:15px;
+    margin:0 0 3px;
+  }
+  .note-card .txt{
+    font-size:13.5px;
+    color:var(--text-muted);
+    line-height:1.55;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .export-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px 16px;
+    box-shadow:var(--shadow);
+    margin-bottom:6px;
+  }
+  .export-desc{
+    font-size:13.5px;
+    color:var(--text-muted);
+    line-height:1.7;
+    margin:0 0 12px;
+  }
+  .export-btn{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:11px;
+    border-radius:12px;
+    border:none;
+    background:var(--accent);
+    color:var(--accent-ink);
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    cursor:pointer;
+  }
+
+  /* tab bar */
+  nav.tabbar{
+    position:sticky;
+    bottom:0;
+    z-index:20;
+    background:var(--surface);
+    border-top:1px solid var(--border);
+    display:flex;
+    padding-bottom:env(safe-area-inset-bottom,0);
+  }
+  .tab-btn{
+    flex:1 1 0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    background:none;
+    border:none;
+    color:var(--text-faint);
+    padding:9px 4px 8px;
+    font-family:"Noto Sans JP",sans-serif;
+    font-size:10.5px;
+    font-weight:500;
+    cursor:pointer;
+  }
+  .tab-btn svg{width:21px;height:21px;}
+  .tab-btn.active{color:var(--accent);}
+
+  a.hp-link{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+  }
+
+  /* home / event picker */
+  .home-btn{
+    flex:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;height:30px;
+    margin-right:2px;
+    border-radius:9px;
+    border:none;
+    background:var(--surface-2);
+    color:var(--text-muted);
+    cursor:pointer;
+  }
+  .home-btn svg{width:16px;height:16px;}
+  .home-hero{padding:6px 0 4px;}
+  .home-hero .hi{
+    width:40px;height:40px;
+    border-radius:12px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:14px;
+  }
+  .home-hero h2{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:900;
+    font-size:21px;
+    margin:0 0 6px;
+    text-wrap:balance;
+  }
+  .home-hero p{
+    font-size:14px;
+    color:var(--text-muted);
+    line-height:1.7;
+    margin:0 0 22px;
+  }
+  .event-list{display:flex;flex-direction:column;gap:11px;}
+  .event-card{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-align:left;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:16px 16px;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .event-card-main{flex:1 1 auto;min-width:0;}
+  .event-card-date{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    font-weight:700;
+    color:var(--accent);
+    letter-spacing:.03em;
+    margin-bottom:5px;
+  }
+  .event-card-name{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:17.5px;
+    margin:0 0 4px;
+  }
+  .event-card-meta{
+    font-size:13px;
+    color:var(--text-faint);
+  }
+  .event-card-chev{flex:none;color:var(--text-faint);}
+  .home-empty-hint{
+    margin-top:20px;
+    padding:14px 16px;
+    border:1px dashed var(--border);
+    border-radius:14px;
+    font-size:12px;
+    color:var(--text-faint);
+    line-height:1.7;
+  }
+
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  @media (prefers-reduced-motion:no-preference){
+    .card,.round,.tips li,.note-card,.event-card{transition:transform .12s ease;}
+    .card:active,.note-card:active,.event-card:active{transform:scale(.98);}
+  }
+</style>
+
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <button class="home-btn" id="homeBtn" hidden aria-label="交流会一覧に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M5.5 9.8V20h13V9.8"/></svg>
+    </button>
+    <h1>事業所名鑑</h1>
+    <span class="sub" id="topbarSub">交流会 当日ガイド</span>
+  </header>
+  <main id="main"></main>
+  <nav class="tabbar" id="tabbar" hidden>
+    <button class="tab-btn" data-tab="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.2" y2="16.2"/></svg>
+      検索
+    </button>
+    <button class="tab-btn" data-tab="schedule">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="3" x2="8" y2="6.5"/><line x1="16" y1="3" x2="16" y2="6.5"/></svg>
+      進行表
+    </button>
+    <button class="tab-btn" data-tab="memo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.5V17l11-11 3.5 3.5-11 11H4z"/><line x1="13" y1="7.5" x2="16.5" y2="11"/></svg>
+      メモ
+    </button>
+  </nav>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var EVENTS = [
+    { id:"chiba-20260914", name:"交流会", date:"2026-09-14", data: {"companies":[{"no":1,"name":"株式会社開周堂","biz":"オフィス家具、セキュリティなど空間づくりをご提案させていただいている会社です。","wish":"オフィス環境改善を考えている企業、建築関係","url":"https://www.kaisyudo.co.jp/","eval":"1930年創業の老舗で、大手家具メーカー・イトーキの千葉県代理店という位置づけ。成田エアポートテクノや千葉大学など公共性の高い大口顧客への納入実績があり、法人向けオフィス整備で安定した事業基盤を持つ会社と見られる。"},{"no":2,"name":"桜橋サポート事務所","biz":"外国人特定技能への支援","wish":"飲食品製造会社等","url":"サイト不明","eval":"外国人特定技能支援を行う事務所だが、情報発信がほぼなく規模・実績は確認できず。個人事務所レベルの小規模運営とみられる。"},{"no":3,"name":"プラナリアインフォ","biz":"ITぼったくり見積もりの見直しと、AIコンサルティング","wish":"司法関係","url":"サイト不明","eval":"ITの見積もり見直しとAIコンサルという切り口はユニークだが、対外的な情報発信が乏しく実績・規模ともに不明。立ち上げ間もない小規模事業者の可能性が高い。"},{"no":4,"name":"税理士法人リリーフ","biz":"創業支援・事業承継・税務顧問・相続対策等を中心に対応する税理士法人です。","wish":"特になし","url":"https://taxrelief.jp/","eval":"元国税調査官や上場企業経理出身者が在籍する専門性の高い税理士法人。創業支援から事業承継・相続まで対応領域が広く、中堅以上の規模感を持つ組織的な事務所と見られる。"},{"no":5,"name":"ネコテガシ","biz":"バックオフィス業務の受託と企業用のマンガ制作","wish":"バックオフィス業務に困っている人","url":"サイト不明(参考: https://note.com/alansmithee_jp)","eval":"バックオフィス受託とマンガ制作という複合事業を掲げるが、公式サイト・法人としての情報発信がほぼなく、個人色の強い小規模事業者とみられる。"},{"no":6,"name":"株式会社クマヒロ","biz":"ワッフルを中心とした洋菓子の製造販売。","wish":"業種問わず","url":"https://waffle-biyori.net/ (推定・運営会社名の明記なし)","eval":"「わっふん日和」ブランドで洋菓子の製造販売を行う地域の菓子店。法人としての企業概要の開示は薄く、BtoC中心の実店舗事業者という位置づけ。"},{"no":7,"name":"株式会社トーシンテック","biz":"業務請負業　鉄工所　特定技能外国人紹介","wish":"鉄工業、製造業","url":"https://toshin-tec.com/","eval":"自社工場を持つ鉄工業と、登録支援機関登録番号を保有した特定技能外国人紹介事業を両輪で展開。実業(製造)とサービス(人材紹介)を併せ持ち、適正な許認可体制のもとで運営している点で信頼感がある。"},{"no":8,"name":"有限会社アイ・デント","biz":"歯科医療用具輸入販売業","wish":"医療用具製造業者","url":"サイト不明","eval":"歯科医療用具の輸入販売を行う有限会社。第三者の業種データベースには掲載があるが自社の情報発信が乏しく、規模・実績は確認できず。ニッチな専門商社とみられる。"},{"no":9,"name":"K.s合同会社","biz":"足場工事、植栽剪定、弱電工事、空調工事","wish":"建設業、不動産","url":"サイト不明","eval":"足場工事・植栽剪定・弱電/空調工事など複数職種を手掛ける建設系合同会社。建設業マッチングサイト上に会社概要はあるが、自社での対外発信は薄く規模感は不明。"},{"no":10,"name":"御園社労士事務所","biz":"人事・労務管理に関する相談、就業規則作成・変更、労働・社会保険の事務手続き、労働基準監督署等の調査・是正勧告対応、助成金の申請、外部相談窓口の受託等。","wish":"特にありません","url":"https://sr-misono.jp/","eval":"25年の実績を持ち、医療法人特化の対応事例もある中堅の社会保険労務士事務所。就業規則作成から助成金申請まで対応範囲が広く、専門性の裏付けがある。"},{"no":11,"name":"関東電子株式会社","biz":"業務用無線インカム専門の会社です。現地通話テスト含め、全てサポート致します。","wish":"介護施設関連企業　危機管理対策にご興味がおありの企業","url":"https://www.kdk72.co.jp/","eval":"1972年創業、業務用無線インカム専門で40年超の実績を持つメーカー系企業。電波法改正など業界動向を発信できるだけの専門性があり、老舗としての安定感がある。"},{"no":12,"name":"ちばIT工房","biz":"ITを利用したビジネスの効率化（DX）、IT資産の運用管理、導入支援、社外の情シス、ITコンサル","wish":"ITを利用する業種であればいずれも可","url":"https://chiba-itkoubou.com/","eval":"「不必要な提案はしない」という方針を明確に打ち出す中小企業向けIT支援会社。社外情シスとして顧客本位の姿勢が伝わるが、対外的な実績数値の開示は少なく規模は不明。"},{"no":13,"name":"株式会社ヒト・コミュニケーションズ 千葉支店","biz":"人材サービス・アウトソーシング事業","wish":"ホテル、小売り、メーカー","url":"https://hitocom.co.jp/","eval":"全国展開する人材サービス大手の千葉支店。グループとしての事業基盤・コンプライアンス体制は整っているが、支店単独としての実績や強みは把握しづらい。"},{"no":14,"name":"株式会社On And On","biz":"千葉県の地域密着型の求人広告代理店です。呼べばすぐ来る！をモットーにしています!!","wish":"特に絞り込まず、他業種を希望","url":"https://www.on-on-co.jp/","eval":"2,000社超の取引実績があり、バイトル・マイナビなど大手求人媒体との提携も持つ地域密着型の求人広告代理店。営業力・顧客基盤のある会社とみられる。"},{"no":15,"name":"合同会社スケダチサービス","biz":"日本語と中国語の教育、外国語の通訳と翻訳、有料人材紹介及び人材育成支援","wish":"製造業、人材紹介業","url":"サイト不明","eval":"日本語・中国語教育や通訳翻訳、人材紹介を手掛けるが、2023年設立と比較的新しく、対外的な情報発信もほぼないため実績・規模は未知数。"},{"no":16,"name":"Rapporti","biz":"飲食店（イタリアン業態）","wish":"特にございません","url":"https://rapporti.foodre.jp/","eval":"地域のイタリアン飲食店で、食材や調理へのこだわりを発信しているが、BtoCの実店舗事業であり法人向け連携の実績は確認できず。"},{"no":17,"name":"合同会社ルマケア","biz":"特定技能生を斡旋する人材紹介","wish":"製造業、介護施設","url":"サイト不明","eval":"特定技能人材紹介を行う合同会社だが、情報発信がほぼなく実績・規模ともに確認できず。"},{"no":18,"name":"株式会社LaLa GLOBAL LANGUAGE","biz":"世界35言語を扱うオンライン語学スクール。Ｂ2Cだけではなく語学研修や翻訳、通訳などＢ2Ｂにも対応","wish":"サービス業や製造業関係(要インバウンド対応)","url":"https://lala-global-language.com/","eval":"35言語対応のオンライン語学スクールで、大手新聞への掲載歴や経済産業省認定への言及があり、新興ながら対外的な評価・信頼構築に成功している会社とみられる。"},{"no":19,"name":"ハッピーカーズ 千葉稲毛店","biz":"中古車買取","wish":"特に希望なし","url":"https://happycars.jp/store/chibainage/","eval":"中古車出張買取のフランチャイズ系列店。店長は約27年の経験を持ち、「強引な営業をしない」という方針を明確化しており、営業スタイルが定まった店舗運営がなされている。"},{"no":20,"name":"株式会社トミザワ Happy佐倉店","biz":"オフィス関連事業、家電リサイクル事業、倉庫パーキング事業、スポーツ施設の運営、各種自動車整備事業、オフィス移転事業、通信システム販売事業","wish":"運送業、オフィスに関わるコンサルティング事業","url":"https://www.119happy.com/ (トミザワグループ: https://www.tomizawa.net/)","eval":"オフィス関連・家電リサイクル・倉庫パーキングなど多角経営を行うトミザワグループの一店舗。グループとしてはCSR/SDGs対応を掲げる組織的な中堅企業だが、佐倉店単独の実績は見えにくい。"},{"no":21,"name":"プレジャー・シェア株式会社","biz":"LINEWORKSで現場の業務効率化をしませんか？導入・活用のお悩みを解決します。","wish":"飲食、小売、観光・サービス、介護","url":"サイト不明","eval":"LINEWORKS導入支援を掲げるが、対外的な情報がほぼ確認できず、規模・実績は不明。"},{"no":22,"name":"株式会社開店市場","biz":"動産の買取り販売","wish":"製造業","url":"https://www.kaitenichiba.jp/","eval":"26年の実績があり、月654件の査定件数、600業種に及ぶ買取品目を扱う老舗の動産買取業者。古物営業法に基づく適正な運営体制も明記されており、実務経験の厚みが感じられる。"},{"no":23,"name":"合同会社たけ映像企画室","biz":"TikTok・Instagram向けショート動画の企画から編集、SNS運用代行","wish":"医療・飲食・建設／住宅・士業など","url":"https://take-kikaku.com/","eval":"制作実績800本以上、累計再生2,900万回という具体的な数字を持つSNSショート動画制作会社。ジャンルを問わず一定の制作量・再生実績を積み上げている点で経験値の高さがうかがえる。"},{"no":24,"name":"izRikko Design STUDIO","biz":"WEB /広告媒体物のデザイン、集客につながる導線設計、Canva講座実施など","wish":"30〜60代 女性起業家","url":"https://izrikko-design-studio.jp/","eval":"Web/広告デザインを手掛ける個人色の強い事業者。女性起業家向けなどニッチな層にフォーカスし、制作フローを明示する丁寧な運営姿勢が見られるが、規模は小さいとみられる。"},{"no":25,"name":"結婚相談所　Marriage joy","biz":"結婚相談所運営・仲人育成・婚活支援","wish":"不動産業","url":"https://marriagejoy.net/","eval":"IBJアワード プレミアム部門受賞という業界団体からの第三者評価を得ている結婚相談所。5,000以上ある相談所の中でも一定の実績・評価を持つ事業者と見られる。"},{"no":26,"name":"Chabi","biz":"中小企業向けのAI活用コンサルティング・業務効率化支援","wish":"特に製造業・建設業・卸売業・サービス業","url":"https://chabi.jp/","eval":"代表者が元自治体職員(7年)かつGoogle AI Professionals認定を持つ、専門性の高いAI活用コンサルタント。米国人材紹介事業者での作業時間-40%・ROI27.5倍という具体的な改善実績があり、実務力の裏付けがある。"},{"no":27,"name":"社会保険労務士事務所テイク.エス","biz":"社会保険労務士業","wish":"税理士、弁護士、人事労務でお困りの方","url":"サイト不明","eval":"社会保険労務士事務所だが、対外的な情報発信がほぼ確認できず、規模・実績は不明。"},{"no":28,"name":"株式会社BearsSystem","biz":"AIを活用したシステム開発、Webサイト制作、業務改善・IT活用支援","wish":"DX・業務効率化、システム開発、AI活用、ホームページ制作・改善などに関心のある中小企業","url":"https://bears-sys.com/","eval":"AIシステム開発・HP制作・業務改善支援を掲げる中小IT企業。実践的な訴求はあるものの、対外的な実績紹介は少なく規模感は不明。"},{"no":29,"name":"ysデベロップメント","biz":"Web制作・業務システム開発・AI活用支援•Webマーケティング","wish":"製造業","url":"サイト不明","eval":"Web制作・業務システム開発・AI活用支援を掲げるが、対外的な情報発信がほぼなく規模・実績は不明。"},{"no":30,"name":"株式会社ゼンリン 千葉支店","biz":"「詳細な地図・位置データ」を活用し、企業や自治体等に業務支援サービスを提供します。","wish":"観光・サービス、金融等","url":"https://www.zenrin.co.jp/company/office/7593/index.html","eval":"地図・位置情報データで知られる大手ゼンリンの支店。IR情報やサステナビリティへの取り組みなど上場企業としての体制が整っており、企業としての信頼度・透明性は非常に高い。"},{"no":31,"name":"ファブワン出版","biz":"企業や人物を取材して、写真・文・Web・出版物などの形にします。","wish":"業種不問。企業経営者、士業・経営支援者。","url":"https://favone.jp/","eval":"自分史・記念誌等の出版制作を専門とする事業者。料金目安や制作実績(人物記・画集・記念誌)を具体的に開示しており、個人向け出版支援の分野で一定の実績を積んでいる。"},{"no":32,"name":"クレアシオン株式会社","biz":"HP作成、LAN工事、ルーター取り付け、システム開発、電子納品代行","wish":"IT関連","url":"http://creasion.co.jp/","eval":"千葉県松戸市を拠点とする電気設備・ICT工事、電子納品代行を手掛ける地域密着型の設備工事会社。華美さはないが地道な実務対応を重視する堅実な事業者という印象。"},{"no":33,"name":"tokko digital partner","biz":"AIを活用した業務効率化支援、webサイトの制作・運用、SNS運用支援を行っています。","wish":"自営業や小規模事業者の方、フリーランスの方","url":"サイト不明","eval":"AI活用業務効率化やWeb制作を掲げるが、対外的な情報発信がほぼなく規模・実績は不明。"},{"no":34,"name":"はたむーぶ","biz":"福祉サービス　就労継続支援A型・B型事業所運営","wish":"特になし","url":"https://hatamove.jp/","eval":"パン製造販売を通じた実践的な就労継続支援(A型・B型)を展開する福祉事業者。複数の問い合わせ手段や保護者向け情報を用意するなど、利用者・家族への配慮が行き届いた運営体制がうかがえる。"},{"no":35,"name":"テルウェル東日本株式会社　東関東支店","biz":"建物清掃・管理、オフィス環境整備・運営支援・商材販売、非常通報装置、電柱広告","wish":"指定業種の希望はありません。","url":"https://www.telwel-east.co.jp/","eval":"NTTグループ系列で、建物清掃・オフィス環境整備からBPO、電柱広告まで幅広いサービスを展開する東関東支店。グループとしての組織力・信頼度は高い。"},{"no":36,"name":"名鉄観光サービス株式会社　千葉支店","biz":"旅行業（教育旅行事業、地域活性化・地方創生事業、自治体・法人ソリューション事業、スポーツ事業、MICE事業、法人旅行事業、インバウンド事業）","wish":"スポーツ事業","url":"https://www.mwt.co.jp/shiten/chiba/","eval":"名鉄グループの旅行会社の千葉支店。総合旅行業務取扱管理者を配置するなど法令順守体制が整っており、教育旅行や自治体向けソリューションなど幅広い実績を持つ老舗旅行会社。"},{"no":37,"name":"STR AI Lab","biz":"業務自動化・運用改善。手作業が残る工程を必要な部分から自動化・仕組み化します。","wish":"士業(行政書士・社労士・税理士等)、建設・不動産業","url":"サイト不明","eval":"業務自動化・運用改善を掲げるが、対外的な情報発信がほぼなく規模・実績は不明。"},{"no":38,"name":"みてからきめる","biz":"HP制作・LINE構築・業務のAI化で、小規模事業者の集客と自動化を支援。","wish":"飲食店・美容/サロン・建設/リフォーム・葬祭業など","url":"サイト不明","eval":"HP制作・LINE構築・業務AI化支援を掲げるが、対外的な情報発信がほぼなく規模・実績は不明。"}],"strategy":[{"priority":"A","label":"No.12 ちばIT工房","no":12,"aim":"社外情シス・DX相談の窓口。開発が必要な案件の紹介元になりうる","topic":"顧客先で開発ニーズが出た時に相談できる相手はいるか、逆に自分を紹介してもらえないか"},{"priority":"A","label":"No.23 合同会社たけ映像企画室","no":23,"aim":"SNS動画制作。アプリのPR動画で組める","topic":"アプリ紹介動画・広告動画の制作を依頼できそうか"},{"priority":"A","label":"No.24 izRikko Design STUDIO","no":24,"aim":"Web/広告デザイン。LPやビジュアル面で協業余地","topic":"アプリのLP/バナー制作を依頼できるか、逆に顧客のシステム化ニーズを紹介し合えるか"},{"priority":"A","label":"No.31 ファブワン出版","no":31,"aim":"コンテンツ制作。アプリの世界観づくりに協業余地","topic":"取材・出版のノウハウをアプリのコンテンツ企画に活かせないか"},{"priority":"C","label":"No.38 みてからきめる","no":38,"aim":"HP制作・LINE構築・業務のAI化支援を手掛ける同業","topic":"得意領域・料金感を聞き、案件を紹介し合える関係が作れないか探る"},{"priority":"B","label":"No.7 株式会社トーシンテック","no":7,"aim":"鉄工+特定技能外国人紹介。人材/工程管理のシステム化余地","topic":"特定技能人材の管理や勤怠・工程管理で困っていることはないか"},{"priority":"B","label":"No.9 K.s合同会社","no":9,"aim":"建設業(足場・植栽・弱電・空調)。工程・見積管理のシステム化余地","topic":"現場管理や見積作成をデジタル化したいニーズはないか"},{"priority":"C","label":"No.32 クレアシオン株式会社","no":32,"aim":"HP制作・システム開発も手掛ける同業。電気設備・ICT工事の実務も持つ点が特徴","topic":"得意領域・料金感を聞き、案件を紹介し合える関係が作れないか探る"},{"priority":"B","label":"No.34 はたむーぶ","no":34,"aim":"福祉事業所(就労継続支援)。記録・報告業務が多くシステム化ニーズが高い","topic":"日々の利用者記録や実績報告の業務をAIで効率化できないか"},{"priority":"B","label":"No.4 税理士法人リリーフ","no":4,"aim":"士業。多数の顧問先とのつながりがあり紹介ルートとして重要","topic":"顧問先でDX・システム化に困っている会社があれば紹介してもらえないか"},{"priority":"B","label":"No.10 御園社労士事務所","no":10,"aim":"士業。顧問先への紹介ルートとして重要","topic":"同上(労務管理システム等のニーズがある顧問先の有無)"},{"priority":"B","label":"No.27 社会保険労務士事務所テイク.エス","no":27,"aim":"士業。顧問先への紹介ルートとして重要","topic":"同上"},{"priority":"B","label":"No.13 株式会社ヒト・コミュニケーションズ","no":13,"aim":"人材サービス。人材管理・マッチングのシステム化ニーズ","topic":"人材管理や紹介業務でツールに困っていることはないか"},{"priority":"B","label":"No.14 株式会社On And On","no":14,"aim":"求人広告代理店。クライアント企業への提案の幅を広げたいニーズ","topic":"求人クライアントへのDX提案で協業できないか"},{"priority":"B","label":"No.15 合同会社スケダチサービス","no":15,"aim":"教育・通訳・人材紹介。マッチング業務のシステム化ニーズ","topic":"人材紹介・教育管理業務をシステム化するニーズはないか"},{"priority":"B","label":"No.17 合同会社ルマケア","no":17,"aim":"特定技能人材紹介。人材管理のシステム化ニーズ","topic":"同上"},{"priority":"C","label":"No.3 プラナリアインフォ","no":3,"aim":"IT見積もり見直し+AIコンサル","topic":"得意領域・料金感を聞き、案件を紹介し合える関係が作れないか探る"},{"priority":"C","label":"No.21 プレジャー・シェア株式会社","no":21,"aim":"LINEWORKS導入支援","topic":"同上"},{"priority":"C","label":"No.26 Chabi","no":26,"aim":"AI活用コンサル(実績豊富)","topic":"コンサル(上流)と開発(下流)で役割分担できないか探る"},{"priority":"C","label":"No.28 株式会社BearsSystem","no":28,"aim":"AIシステム開発・HP制作","topic":"得意分野・規模感を聞き、下請け/紹介関係の可能性を探る"},{"priority":"C","label":"No.29 ysデベロップメント","no":29,"aim":"Web制作・業務システム開発・AI活用支援","topic":"同上"},{"priority":"C","label":"No.33 tokko digital partner","no":33,"aim":"AI活用業務効率化支援","topic":"同上"},{"priority":"C","label":"No.37 STR AI Lab","no":37,"aim":"業務自動化・運用改善","topic":"同上"}]},
+      prepDefaults: {
+        selfintro: "株式会社BearsSystemの[お名前]です。AIを活用したシステム開発やWebサイト制作、業務改善・IT活用支援を行っています。今日は、DXや業務効率化、AI活用に興味のある中小企業の方や、開発案件でご一緒できそうな制作会社・士業の方とお話しできればと思っています。よろしくお願いします。",
+        topic0: "イチオシはAIを使ったシステム開発です。「とりあえずAIを入れる」のではなく、実際の業務フローに合わせて設計して、手作業や確認の手間そのものを減らすところまでやるのが強みです。Webサイト制作から業務改善のご相談まで、開発は一社で伴走できます。",
+        topic1: "直近で「これは楽になった」と言ってもらえた具体的なエピソードを一つ用意しておく（例：○○という手作業をAIと連携させたシステムに置き換えて、確認作業の時間を大きく減らせた、など）。当日話す前に実際の案件名や数字に差し替えてください。",
+        topic2: "DXや業務効率化、AI活用、ホームページ制作・改善に関心のある中小企業の方とつながりたいです。特に士業や人材紹介、建設業など、日々の記録・見積・工程管理に手間がかかっている業種の方とは相性が良いと思っています。あとはWeb制作やSNS動画制作など得意分野が違う制作会社さんとも、お互いのお客さんを紹介し合えるような関係を作れたら嬉しいです。",
+        freetime: "優先度A（ちばIT工房・たけ映像企画室・izRikko Design STUDIO・ファブワン出版）には自分から声をかけて協業の可能性を探る。優先度B（税理士法人リリーフ・御園社労士事務所・トーシンテック・K.s合同会社・はたむーぶなど）には、顧問先や自社の業務でDX・システム化の困りごとがないか聞いてみる。優先度C(同業のIT/AI/システム開発会社)は、得意分野や料金感を聞いて紹介し合える関係を探る。時間が余ったら士業の方（紹介ルートとして重要）を優先的に。"
+      }
+    }
+  ];
+
+  var PLABEL = {A:"協業・提携パートナー候補", B:"クライアント候補", C:"競合・情報交換"};
+
+  var PROPOSAL_META = {
+    1: "オフィス家具・什器の見積や案件進捗をまとめる社内システム、施工実績をアピールできるHPリニューアルを提案できそうです。",
+    2: "在留期限や提出書類の管理を自動化する社内システム、多言語対応のAIチャットで一次対応を効率化する提案ができそうです。",
+    3: "同じくIT見積もり・AIコンサルを扱う立場なので、案件によっては開発を任せてもらえる下請け・紹介関係を提案したいところです。",
+    4: "顧問先ごとの資料授受・進捗管理をまとめる社内システム、事業承継や相続の相談導線を強化するHPリニューアルを提案できそうです。",
+    5: "受託業務の進捗・請求をまとめる社内システム、マンガ制作の実績を見せるポートフォリオサイトを提案できそうです。",
+    6: "オンライン注文・予約ができるECサイト、店舗と本部の在庫・売上を管理する社内システムを提案できそうです。",
+    7: "特定技能人材の勤怠・工程管理をまとめる社内システム、鉄工事業の実績を見せるHPリニューアルを提案できそうです。",
+    8: "医療用具の在庫・受発注を管理する社内システム、取扱商品を紹介するHP制作を提案できそうです。",
+    9: "現場写真や見積をスマホで管理できる社内システム、施工事例を見せるHP制作を提案できそうです。",
+    10: "顧問先ごとの手続き進捗を管理する社内システム、助成金情報などを発信できるHPリニューアルを提案できそうです。",
+    11: "レンタル在庫・保守履歴を管理する社内システム、製品ラインナップを紹介するHPリニューアルを提案できそうです。",
+    12: "社外情シスとして近い立場なので、開発が必要になった案件をお互いに紹介し合える関係を提案したいところです。",
+    13: "案件とスタッフのマッチング・稼働管理をまとめる社内システム、求職者向けのHP改善を提案できそうです。",
+    14: "クライアントごとの求人進捗を管理する社内システム、AIを使った求人原稿作成支援を提案できそうです。",
+    15: "生徒・通訳案件の進捗を管理する社内システム、多言語対応の集客HPを提案できそうです。",
+    16: "予約・顧客管理システム、メニューやこだわりを見せるHP＋ネット予約導線の整備を提案できそうです。",
+    17: "特定技能人材の候補者管理をまとめる社内システム、AIを使ったマッチング支援を提案できそうです。",
+    18: "受講生・レッスンスケジュールを管理する社内システム、多言語対応の集客HPリニューアルを提案できそうです。",
+    19: "査定・在庫管理システム、出張買取の強みを見せる集客用HP・LP制作を提案できそうです。",
+    20: "オフィス移転や家電リサイクルなど複数事業をまたぐ予約・在庫管理システム、事業紹介HPの整理を提案できそうです。",
+    21: "LINEWORKS導入支援と親和性が高いので、その先の業務システム開発をセットで提案し合える関係を提案したいところです。",
+    22: "査定・在庫・顧客管理をまとめる社内システム、600業種に及ぶ取扱品目を見せる集客用HPを提案できそうです。",
+    23: "動画制作とセットで、アプリやHPのPR動画・システム開発を組み合わせた提案ができるパートナー関係を提案したいところです。",
+    24: "デザインと開発をセットにした提案ができるパートナー関係、集客導線のシステム面（予約・問い合わせ管理）を提案したいところです。",
+    25: "会員・お見合いのマッチング状況を管理する社内システム、集客用HPリニューアルを提案できそうです。",
+    26: "上流のAIコンサルと下流のシステム開発で役割分担できるパートナー関係を提案したいところです。",
+    27: "顧問先ごとの手続き・相談状況を管理する社内システム、事務所HPの新規制作を提案できそうです。",
+    29: "Web制作・システム開発が重なる領域なので、得意分野を補い合う下請け・紹介関係を提案したいところです。",
+    30: "地図・位置データを活用したAI／システム連携など、大きな取り組みの一部を担う形での提案ができないか探りたいところです。",
+    31: "取材・出版の実績を見せるポートフォリオHP、制作案件の進捗管理システムを提案できそうです。",
+    32: "電気設備・ICT工事と近い領域なので、繁忙期の開発案件を紹介し合える関係を提案したいところです。",
+    33: "AI活用支援と重なる領域なので、案件の紹介や下請けし合える関係を提案したいところです。",
+    34: "利用者の日々の記録や実績報告をAIで効率化する社内システム、施設紹介HPのリニューアルを提案できそうです。",
+    35: "オフィス清掃・整備など幅広い業務の管理システム化について、部分的にでも提案できないか探りたいところです。",
+    36: "教育旅行や自治体案件の予約・顧客管理システム、集客用HPの改善を提案できそうです。",
+    37: "業務自動化・運用改善と重なる領域なので、案件の紹介や下請けし合える関係を提案したいところです。",
+    38: "HP制作・LINE構築・AI化支援と重なる領域なので、案件の紹介や下請けし合える関係を提案したいところです。"
+  };
+
+  function notesKey(eventId){ return "koryukai_notes_v1_" + eventId; }
+  function freeMemoKey(eventId){ return "koryukai_freememo_v1_" + eventId; }
+  function prepKey(eventId){ return "koryukai_prep_v1_" + eventId; }
+
+  function loadNotes(eventId){
+    try{ return JSON.parse(localStorage.getItem(notesKey(eventId)) || "{}"); }catch(e){ return {}; }
+  }
+  function saveNotes(eventId, obj){
+    try{ localStorage.setItem(notesKey(eventId), JSON.stringify(obj)); }catch(e){}
+  }
+  function loadFreeMemo(eventId){
+    try{ return localStorage.getItem(freeMemoKey(eventId)) || ""; }catch(e){ return ""; }
+  }
+  function saveFreeMemo(eventId, v){
+    try{ localStorage.setItem(freeMemoKey(eventId), v); }catch(e){}
+  }
+  function loadPrep(eventId){
+    try{ return JSON.parse(localStorage.getItem(prepKey(eventId)) || "{}"); }catch(e){ return {}; }
+  }
+  function savePrep(eventId, obj){
+    try{ localStorage.setItem(prepKey(eventId), JSON.stringify(obj)); }catch(e){}
+  }
+  function talkedKey(eventId){ return "koryukai_talked_v1_" + eventId; }
+  function loadTalked(eventId){
+    try{ return JSON.parse(localStorage.getItem(talkedKey(eventId)) || "{}"); }catch(e){ return {}; }
+  }
+  function saveTalked(eventId, obj){
+    try{ localStorage.setItem(talkedKey(eventId), JSON.stringify(obj)); }catch(e){}
+  }
+
+  function formatDate(d){
+    var p = d.split("-");
+    return p[0]+"年"+parseInt(p[1],10)+"月"+parseInt(p[2],10)+"日";
+  }
+
+  var currentEvent = null;
+  var DATA = null;
+  var strategyMap = {};
+  var notes = {};
+  var prep = {};
+  var talked = {};
+
+  var state = { screen:"home", eventId:null, tab:"search", query:"", filter:"all", selectedNo:null, modalKey:null, modalEditing:false, hideTalked:false };
+
+  function enterEvent(ev){
+    currentEvent = ev;
+    DATA = ev.data;
+    strategyMap = {};
+    DATA.strategy.forEach(function(s){ strategyMap[s.no] = s; });
+    notes = loadNotes(ev.id);
+    prep = {};
+    if(ev.prepDefaults){
+      for(var k in ev.prepDefaults){ prep[k] = ev.prepDefaults[k]; }
+    }
+    var savedPrep = loadPrep(ev.id);
+    for(var k2 in savedPrep){ prep[k2] = savedPrep[k2]; }
+    talked = loadTalked(ev.id);
+    state.screen = "app";
+    state.eventId = ev.id;
+    state.tab = "search";
+    state.query = "";
+    state.filter = "all";
+    state.selectedNo = null;
+    state.modalKey = null;
+    state.modalEditing = false;
+    state.hideTalked = false;
+    render();
+    window.scrollTo(0,0);
+  }
+
+  function backToHome(){
+    state.screen = "home";
+    state.selectedNo = null;
+    render();
+    window.scrollTo(0,0);
+  }
+
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  function priorityOf(no){
+    var s = strategyMap[no];
+    return s ? s.priority : null;
+  }
+
+  function isUrl(u){
+    return /^https?:\/\//i.test(u || "");
+  }
+
+  function urlField(url){
+    if(isUrl(url)){
+      return '<a class="hp-link" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(url)+
+        ' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></a>';
+    }
+    return esc(url || "サイト不明");
+  }
+
+  var main = document.getElementById("main");
+  var homeBtn = document.getElementById("homeBtn");
+  var topbarSub = document.getElementById("topbarSub");
+  var tabbarEl = document.getElementById("tabbar");
+
+  function render(){
+    if(state.screen === "home"){
+      homeBtn.hidden = true;
+      topbarSub.textContent = "交流会 当日ガイド";
+      tabbarEl.hidden = true;
+      main.innerHTML = renderHome();
+      bindDynamic();
+      return;
+    }
+    homeBtn.hidden = false;
+    topbarSub.textContent = currentEvent.name + "（" + formatDate(currentEvent.date) + "開催）";
+    tabbarEl.hidden = false;
+    document.querySelectorAll(".tab-btn").forEach(function(b){
+      b.classList.toggle("active", b.dataset.tab === state.tab);
+    });
+    if(state.tab === "search"){
+      main.innerHTML = state.selectedNo ? renderDetail(state.selectedNo) : renderSearch();
+    }else if(state.tab === "schedule"){
+      main.innerHTML = renderSchedule();
+    }else{
+      main.innerHTML = renderMemoTab();
+    }
+    bindDynamic();
+  }
+
+  function renderHome(){
+    var html = '<section class="view">';
+    html += '<div class="home-hero">';
+    html += '<div class="hi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3.5 5 7l3.5 3.5M15.5 3.5 19 7l-3.5 3.5"/><path d="M4 20.5c0-3 2.5-5 5-5h6c2.5 0 5 2 5 5"/><circle cx="12" cy="13" r="3.2"/></svg></div>';
+    html += '<h2>交流会を選択</h2>';
+    html += '<p>参加する交流会をタップすると、事業所名鑑・進行表・メモが開きます。</p>';
+    html += '</div>';
+    html += '<div class="event-list">';
+    EVENTS.forEach(function(ev){
+      html += '<button class="event-card" data-event="'+esc(ev.id)+'">';
+      html += '  <span class="event-card-main">';
+      html += '    <span class="event-card-date">'+esc(formatDate(ev.date))+'</span>';
+      html += '    <p class="event-card-name">'+esc(ev.name)+'</p>';
+      html += '    <span class="event-card-meta">参加'+ev.data.companies.length+'事業所・事業所名鑑 / 進行表 / メモ</span>';
+      html += '  </span>';
+      html += '  <span class="event-card-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>';
+      html += '</button>';
+    });
+    html += '</div>';
+    html += '<p class="home-empty-hint">別の交流会に参加するときは、事業所リストを渡してもらえれば追加できます。</p>';
+    html += '</section>';
+    return html;
+  }
+
+  function counts(){
+    var c = {A:0,B:0,C:0,none:0};
+    DATA.companies.forEach(function(co){
+      var p = priorityOf(co.no);
+      c[p || "none"]++;
+    });
+    return c;
+  }
+
+  function filteredCompanies(){
+    var q = state.query.trim();
+    return DATA.companies.filter(function(co){
+      if(state.filter !== "all"){
+        var p = priorityOf(co.no) || "none";
+        if(p !== state.filter) return false;
+      }
+      if(state.hideTalked && talked[co.no]) return false;
+      if(!q) return true;
+      var hay = co.name + " " + co.biz + " " + co.wish;
+      return hay.indexOf(q) !== -1;
+    });
+  }
+
+  function renderCompanyCard(co){
+    var p = priorityOf(co.no);
+    var hasNote = notes[co.no] && notes[co.no].trim();
+    var isTalked = !!talked[co.no];
+    var html = '';
+    html += '<div class="card'+(p?' p'+p:'')+'" data-open="'+co.no+'" role="button" tabindex="0">';
+    html += '  <span class="stripe"></span>';
+    html += '  <span class="card-body">';
+    html += '    <span class="card-top"><span class="no-tag">No.'+co.no+'</span>'+(p?'<span class="pbadge '+p+'">'+p+'</span>':'');
+    html += '      <button class="talk-check'+(isTalked?' checked':'')+'" data-talk="'+co.no+'" aria-pressed="'+(isTalked?'true':'false')+'" aria-label="話した・未対応を切り替え"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 13 10 18 19 7"/></svg></button>';
+    html += '    </span>';
+    html += '    <p class="card-name">'+esc(co.name)+'</p>';
+    html += '    <p class="card-biz">'+esc(co.biz)+'</p>';
+    if(hasNote){
+      html += '    <span class="note-flag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 20.5V17l11-11 3.5 3.5-11 11H4z"/></svg>メモあり</span>';
+    }
+    html += '  </span>';
+    html += '  <span class="card-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>';
+    html += '</div>';
+    return html;
+  }
+
+  var GROUP_META = {
+    A: {label:"協業・提携パートナー候補", dot:"var(--pri-a)"},
+    B: {label:"クライアント候補", dot:"var(--pri-b)"},
+    C: {label:"競合・情報交換", dot:"var(--pri-c)"},
+    none: {label:"未分類", dot:"var(--pri-none)"}
+  };
+
+  function groupedCompanies(){
+    var groups = {A:[], B:[], C:[], none:[]};
+    DATA.companies.forEach(function(co){
+      if(state.hideTalked && talked[co.no]) return;
+      var p = priorityOf(co.no) || "none";
+      groups[p].push(co);
+    });
+    return ["A","B","C","none"].map(function(k){
+      return {key:k, label:GROUP_META[k].label, dot:GROUP_META[k].dot, items:groups[k]};
+    }).filter(function(g){ return g.items.length > 0; });
+  }
+
+  function renderSearch(){
+    var c = counts();
+    var chips = [
+      {k:"all", label:"すべて", n:DATA.companies.length},
+      {k:"A", label:"A", n:c.A},
+      {k:"B", label:"B", n:c.B},
+      {k:"C", label:"C", n:c.C},
+      {k:"none", label:"未分類", n:c.none}
+    ];
+    var isGrouped = (state.filter === "all" && !state.query.trim());
+    var html = '';
+    html += '<div class="search-wrap">';
+    html += '  <div class="search-field">';
+    html += '    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.2" y2="16.2"/></svg>';
+    html += '    <input id="q" type="search" inputmode="search" placeholder="事業所名・業種で検索…" value="'+esc(state.query)+'">';
+    html += '  </div>';
+    html += '  <div class="chips">';
+    chips.forEach(function(ch){
+      html += '<button class="chip'+(state.filter===ch.k?' active':'')+'" data-p="'+ch.k+'" data-filter="'+ch.k+'">'+esc(ch.label)+' <span class="n">'+ch.n+'</span></button>';
+    });
+    html += '  </div>';
+    html += '  <div class="toggle-row">';
+    html += '    <label><input type="checkbox" id="hideTalkedCheckbox"'+(state.hideTalked?' checked':'')+'>話した事業所を隠す</label>';
+    html += '    <span class="progress-stat">話した '+talkedCount()+' / '+DATA.companies.length+'</span>';
+    html += '  </div>';
+    html += '</div>';
+
+    if(isGrouped){
+      var groups = groupedCompanies();
+      if(groups.length === 0){
+        html += '<div class="empty">条件に合う未対応の事業所はありません。</div>';
+      }else{
+        groups.forEach(function(g){
+          html += '<div class="group-header"><span class="gdot" style="background:'+g.dot+'"></span>'+esc(g.label)+'<span class="gcount">'+g.items.length+'</span></div>';
+          html += '<div class="list">';
+          g.items.forEach(function(co){ html += renderCompanyCard(co); });
+          html += '</div>';
+        });
+      }
+    }else{
+      var list = filteredCompanies();
+      if(list.length === 0){
+        html += '<div class="empty">'+(state.hideTalked ? "条件に合う未対応の事業所はありません。" : '「'+esc(state.query)+'」に一致する事業所が見つかりません。')+'</div>';
+      }else{
+        html += '<div class="list">';
+        list.forEach(function(co){ html += renderCompanyCard(co); });
+        html += '</div>';
+      }
+    }
+    return html;
+  }
+
+  function talkedCount(){
+    return DATA.companies.filter(function(co){ return talked[co.no]; }).length;
+  }
+
+  function renderDetail(no){
+    var co = DATA.companies.filter(function(c){ return c.no === no; })[0];
+    if(!co){ state.selectedNo = null; return renderSearch(); }
+    var p = priorityOf(no);
+    var strat = strategyMap[no];
+    var html = '<div class="detail">';
+    html += '<button class="back-btn" id="backBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>一覧へ戻る</button>';
+    html += '<div class="detail-head"><div>';
+    html += '<div class="tags"><span class="no-tag">No.'+co.no+'</span>'+(p?'<span class="pbadge '+p+'">'+p+' ・ '+esc(PLABEL[p])+'</span>':'')+'</div>';
+    html += '<h2 class="detail-name">'+esc(co.name)+'</h2>';
+    html += '</div></div>';
+
+    var isTalked = !!talked[co.no];
+    html += '<button class="talk-toggle'+(isTalked?' checked':'')+'" data-talk="'+co.no+'" aria-pressed="'+(isTalked?'true':'false')+'">';
+    html += '  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 13 10 18 19 7"/></svg>';
+    html += '  '+(isTalked ? "話した（タップで未対応に戻す）" : "まだ話していない（タップで話した済みに）");
+    html += '</button>';
+
+    html += '<div class="field"><div class="label">事業内容</div><div class="val">'+esc(co.biz)+'</div></div>';
+    html += '<div class="field"><div class="label">交流希望</div><div class="val">'+esc(co.wish || "特になし")+'</div></div>';
+    html += '<div class="field"><div class="label">ホームページ</div><div class="val">'+urlField(co.url)+'</div></div>';
+    html += '<div class="field eval"><div class="label">事前リサーチ評価</div><div class="val">'+esc(co.eval || "情報なし")+'</div></div>';
+
+    if(PROPOSAL_META[no]){
+      html += '<div class="field proposal"><div class="label">BearsSystemから提案できること</div><div class="val">'+esc(PROPOSAL_META[no])+'</div></div>';
+    }
+
+    if(strat){
+      html += '<div class="field strategy '+p+'">';
+      html += '<div class="label"><span class="plabel">作戦メモ：'+esc(PLABEL[p])+'</span></div>';
+      html += '<div class="sub-label">アプローチの狙い</div><div class="val">'+esc(strat.aim)+'</div>';
+      html += '<div class="sub-label">話すトピック案</div><div class="val">'+esc(strat.topic)+'</div>';
+      html += '</div>';
+    }
+
+    html += '<div class="field">';
+    html += '<div class="label">自分メモ</div>';
+    html += '<textarea class="memo-input" id="noteInput" placeholder="話した内容、印象、次のアクションなど…">'+esc(notes[co.no] || "")+'</textarea>';
+    html += '<div class="memo-save-state" id="saveState"></div>';
+    html += '</div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  var PREP_META = {
+    selfintro: { title:"自己紹介の準備", hint:"会社名・事業内容・今日話したいこと など、30秒で話す自己紹介を考えておこう" },
+    topic0: { title:"「自社のイチオシを教えてください」", hint:"話す内容・エピソードを考えておこう" },
+    topic1: { title:"「最近、仕事でやってよかったこと」", hint:"話す内容・エピソードを考えておこう" },
+    topic2: { title:"「こんな人とつながりたい！」", hint:"話す内容・エピソードを考えておこう" },
+    freetime: { title:"フリータイムの動き方", hint:"優先的に声をかけたい事業所、伝えたいこと、聞きたいことをまとめておこう" }
+  };
+
+  function chevron(){
+    return '<span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>';
+  }
+  function prepStatus(key, emptyText){
+    return (prep[key] && prep[key].trim()) ? "✎ 準備メモあり（タップで編集）" : emptyText;
+  }
+  function renderPrepModal(){
+    if(!state.modalKey) return "";
+    var key = state.modalKey;
+    var meta = PREP_META[key];
+    if(!meta) return "";
+    var val = prep[key] || "";
+    var html = '';
+    html += '<div class="modal-backdrop" id="modalBackdrop">';
+    html += '  <div class="modal-sheet" role="dialog" aria-modal="true" aria-label="'+esc(meta.title)+'">';
+    html += '    <div class="modal-head">';
+    html += '      <h3>'+esc(meta.title)+'</h3>';
+    html += '      <button class="modal-close" id="modalCloseBtn" aria-label="閉じる"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>';
+    html += '    </div>';
+    if(state.modalEditing){
+      html += '    <textarea class="memo-input prep-input modal-textarea" id="prepInput_'+key+'" data-prepkey="'+key+'" placeholder="'+esc(meta.hint)+'">'+esc(val)+'</textarea>';
+      html += '    <div class="modal-actions">';
+      html += '      <div class="memo-save-state" id="prepSaveState_'+key+'"></div>';
+      html += '      <button class="modal-done-btn" id="modalDoneBtn">完了</button>';
+      html += '    </div>';
+    }else{
+      if(val.trim()){
+        html += '    <div class="modal-view-text">'+esc(val)+'</div>';
+      }else{
+        html += '    <div class="modal-view-empty">まだ準備メモがありません。</div>';
+      }
+      html += '    <button class="modal-edit-btn" id="modalEditBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.5V17l11-11 3.5 3.5-11 11H4z"/><line x1="13" y1="7.5" x2="16.5" y2="11"/></svg>編集する</button>';
+    }
+    html += '  </div>';
+    html += '</div>';
+    return html;
+  }
+
+  function renderSchedule(){
+    var html = '<section class="view">';
+
+    html += '<h2 class="section-title">自己紹介の準備</h2>';
+    html += '<div class="prep-card">';
+    html += '<button class="agenda-row agenda-click" data-toggle="selfintro" style="border-top:none;">';
+    html += '  <span class="d" style="text-align:left;"><b>各ラウンド共通・30秒程度</b><br>会社名・事業内容・今日話したいこと など';
+    html += '    <span class="prep-hint">'+esc(prepStatus("selfintro","タップして話す内容を準備する"))+'</span>';
+    html += '  </span>';
+    html += chevron();
+    html += '</button>';
+    html += '</div>';
+
+    html += '<h2 class="section-title">第1部：グループ別交流</h2>';
+    html += '<div class="timeline">';
+
+    var rounds = [
+      {title:"第1回グループ交流", topic:"自社のイチオシを教えてください", key:"topic0"},
+      {title:"第2回グループ交流", topic:"最近、仕事でやってよかったこと", key:"topic1"},
+      {title:"第3回グループ交流", topic:"こんな人とつながりたい！", key:"topic2"}
+    ];
+    rounds.forEach(function(r, i){
+      html += '<div class="round">';
+      html += '  <p class="round-title">'+esc(r.title)+'</p>';
+      html += '  <div class="agenda-row first"><span class="t">6分</span><span class="d">自己紹介</span></div>';
+      html += '  <button class="agenda-row agenda-click" data-toggle="'+r.key+'">';
+      html += '    <span class="t">15分</span>';
+      html += '    <span class="d">グループディスカッション<br><b>「'+esc(r.topic)+'」</b>';
+      html += '      <span class="prep-hint">'+esc(prepStatus(r.key, "タップして話す内容を準備する"))+'</span>';
+      html += '    </span>';
+      html += chevron();
+      html += '  </button>';
+      html += '  <div class="agenda-row"><span class="t">6分</span><span class="d">自由交流</span></div>';
+      html += '</div>';
+      if(i < rounds.length - 1){
+        html += '<div class="move-note">～ 席の移動 ～</div>';
+      }
+    });
+    html += '</div>';
+
+    html += '<h2 class="section-title">第2部：フリータイム</h2>';
+    html += '<div class="part2">';
+    html += '  <p class="round-title">自由交流</p>';
+    html += '  <button class="agenda-row agenda-click" data-toggle="freetime" style="border-top:none;">';
+    html += '    <span class="d" style="text-align:left;">自由にご交流ください。名刺交換をしたい事業所があれば、事務局に声をかければお呼び出ししてもらえます。';
+    html += '      <span class="prep-hint">'+esc(prepStatus("freetime","タップして当日の動き方を準備する"))+'</span>';
+    html += '    </span>';
+    html += chevron();
+    html += '  </button>';
+    html += '</div>';
+
+    html += '<h2 class="section-title">立ち回りのコツ</h2>';
+    html += '<ul class="tips">';
+    var tips = [
+      "3つのディスカッションお題（イチオシ／やってよかったこと／つながりたい人物像）は、一言分だけ先に用意しておくと自己紹介がスムーズ。",
+      "フリータイムに入ったら、検索タブで優先度「A」「B」の事業所から先に声をかけに行く。人数が多いので迷ったらここを基準に。",
+      "名刺交換したい相手が離れた場所にいても、事務局に声をかければ呼び出してもらえる。遠慮せず活用する。",
+      "話した直後にメモタブ（またはその事業所の詳細ページ）へ一言メモ。あとで見返すと誰が誰だか思い出しやすい。"
+    ];
+    tips.forEach(function(t, i){
+      html += '<li><span class="ti">'+(i+1)+'</span><span>'+esc(t)+'</span></li>';
+    });
+    html += '</ul>';
+    html += '</section>';
+    html += renderPrepModal();
+    return html;
+  }
+
+  function renderMemoTab(){
+    var html = '<section class="view">';
+    html += '<h2 class="section-title" style="margin-top:2px;">当日フリーメモ</h2>';
+    html += '<div class="free-memo-box"><textarea id="freeMemoInput" placeholder="全体の気づき、TODO、あとで調べたいことなど自由にどうぞ…">'+esc(loadFreeMemo(state.eventId))+'</textarea></div>';
+    html += '<div class="memo-save-state" id="freeSaveState" style="padding-left:2px;"></div>';
+
+    var entries = DATA.companies
+      .map(function(co){ return {co:co, text: notes[co.no] || ""}; })
+      .filter(function(e){ return e.text.trim().length > 0; });
+
+    html += '<h2 class="section-title">事業所別メモ ('+entries.length+')</h2>';
+    if(entries.length === 0){
+      html += '<div class="empty">検索タブで事業所を開くと、下部に個別メモを書けます。<br>書いたメモはここに一覧表示されます。</div>';
+    }else{
+      entries.forEach(function(e){
+        var p = priorityOf(e.co.no);
+        html += '<div class="note-card'+(p?' p'+p:'')+'" data-open="'+e.co.no+'" role="button" tabindex="0">';
+        html += '  <span class="stripe"></span>';
+        html += '  <span>';
+        html += '    <p class="name">No.'+e.co.no+' '+esc(e.co.name)+'</p>';
+        html += '    <p class="txt">'+esc(e.text)+'</p>';
+        html += '  </span>';
+        html += '</div>';
+      });
+    }
+
+    html += '<h2 class="section-title">書き出し</h2>';
+    html += '<div class="export-card">';
+    html += '  <p class="export-desc">当日フリーメモ・準備メモ・事業所別メモをまとめてテキストにします。終了後の振り返りやお礼連絡にどうぞ。</p>';
+    html += '  <button class="export-btn" id="exportBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="10" height="4" rx="1"/><path d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/></svg><span id="exportBtnLabel">メモを書き出す（コピー）</span></button>';
+    html += '</div>';
+
+    html += '</section>';
+    return html;
+  }
+
+  function buildExportText(){
+    var lines = [];
+    lines.push((currentEvent.name)+"（"+formatDate(currentEvent.date)+"）メモ");
+    lines.push("");
+    var fm = loadFreeMemo(state.eventId);
+    if(fm && fm.trim()){
+      lines.push("■ 当日フリーメモ");
+      lines.push(fm.trim());
+      lines.push("");
+    }
+    if(prep.selfintro && prep.selfintro.trim()){
+      lines.push("■ 自己紹介");
+      lines.push(prep.selfintro.trim());
+      lines.push("");
+    }
+    var topicLabels = {
+      topic0:"自社のイチオシを教えてください",
+      topic1:"最近、仕事でやってよかったこと",
+      topic2:"こんな人とつながりたい！"
+    };
+    var topicLines = [];
+    ["topic0","topic1","topic2"].forEach(function(k){
+      if(prep[k] && prep[k].trim()){
+        topicLines.push("・"+topicLabels[k]);
+        topicLines.push("  "+prep[k].trim());
+      }
+    });
+    if(topicLines.length){
+      lines.push("■ ディスカッション準備");
+      lines = lines.concat(topicLines);
+      lines.push("");
+    }
+    if(prep.freetime && prep.freetime.trim()){
+      lines.push("■ フリータイムの動き方");
+      lines.push(prep.freetime.trim());
+      lines.push("");
+    }
+    var noteLines = [];
+    DATA.companies.forEach(function(co){
+      var t = notes[co.no];
+      if(t && t.trim()){
+        noteLines.push("No."+co.no+" "+co.name);
+        noteLines.push("  "+t.trim());
+      }
+    });
+    if(noteLines.length){
+      lines.push("■ 事業所別メモ");
+      lines = lines.concat(noteLines);
+    }
+    while(lines.length && lines[lines.length-1] === ""){ lines.pop(); }
+    return lines.join("\n");
+  }
+
+  function fallbackCopy(text){
+    try{
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      var ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function copyExport(){
+    var text = buildExportText();
+    var label = document.getElementById("exportBtnLabel");
+    function done(ok){
+      if(!label) return;
+      label.textContent = ok ? "コピーしました" : "コピーできませんでした（手動で選択してください）";
+      setTimeout(function(){
+        if(label) label.textContent = "メモを書き出す（コピー）";
+      }, 2200);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ done(fallbackCopy(text)); });
+    }else{
+      done(fallbackCopy(text));
+    }
+  }
+
+  function bindDynamic(){
+    var q = document.getElementById("q");
+    if(q){
+      q.addEventListener("input", function(){
+        state.query = q.value;
+        var list = filteredCompanies();
+        var wrap = main.querySelector(".list") || main.querySelector(".empty");
+        // simplest: re-render just the results area by re-rendering whole search view but keep focus
+        var pos = q.selectionStart;
+        main.innerHTML = renderSearch();
+        bindDynamic();
+        var q2 = document.getElementById("q");
+        if(q2){ q2.focus(); q2.setSelectionRange(pos, pos); }
+      });
+    }
+    document.querySelectorAll(".chip").forEach(function(ch){
+      ch.addEventListener("click", function(){
+        state.filter = ch.dataset.filter;
+        render();
+      });
+    });
+    document.querySelectorAll("[data-open]").forEach(function(el){
+      el.addEventListener("click", function(){
+        state.selectedNo = parseInt(el.dataset.open, 10);
+        state.tab = "search";
+        render();
+        main.scrollTop = 0;
+        window.scrollTo(0,0);
+      });
+      el.addEventListener("keydown", function(ev){
+        if(ev.key === "Enter" || ev.key === " "){
+          ev.preventDefault();
+          el.click();
+        }
+      });
+    });
+    document.querySelectorAll("[data-talk]").forEach(function(el){
+      el.addEventListener("click", function(ev){
+        ev.stopPropagation();
+        var no = parseInt(el.dataset.talk, 10);
+        talked[no] = !talked[no];
+        saveTalked(state.eventId, talked);
+        render();
+      });
+    });
+    var hideTalkedCb = document.getElementById("hideTalkedCheckbox");
+    if(hideTalkedCb){
+      hideTalkedCb.addEventListener("change", function(){
+        state.hideTalked = hideTalkedCb.checked;
+        render();
+      });
+    }
+    var exportBtn = document.getElementById("exportBtn");
+    if(exportBtn){
+      exportBtn.addEventListener("click", copyExport);
+    }
+    document.querySelectorAll("[data-event]").forEach(function(el){
+      el.addEventListener("click", function(){
+        var ev = EVENTS.filter(function(e){ return e.id === el.dataset.event; })[0];
+        if(ev) enterEvent(ev);
+      });
+    });
+    document.querySelectorAll("[data-toggle]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        state.modalKey = btn.dataset.toggle;
+        state.modalEditing = false;
+        render();
+      });
+    });
+    function flushActivePrepEdit(){
+      if(state.modalKey && state.modalEditing){
+        var ta = document.getElementById("prepInput_"+state.modalKey);
+        if(ta){
+          prep[state.modalKey] = ta.value;
+          savePrep(state.eventId, prep);
+        }
+      }
+    }
+    var modalBackdrop = document.getElementById("modalBackdrop");
+    if(modalBackdrop){
+      modalBackdrop.addEventListener("click", function(ev){
+        if(ev.target === modalBackdrop){
+          flushActivePrepEdit();
+          state.modalKey = null;
+          state.modalEditing = false;
+          render();
+        }
+      });
+    }
+    var modalCloseBtn = document.getElementById("modalCloseBtn");
+    if(modalCloseBtn){
+      modalCloseBtn.addEventListener("click", function(){
+        flushActivePrepEdit();
+        state.modalKey = null;
+        state.modalEditing = false;
+        render();
+      });
+    }
+    var modalEditBtn = document.getElementById("modalEditBtn");
+    if(modalEditBtn){
+      modalEditBtn.addEventListener("click", function(){
+        state.modalEditing = true;
+        render();
+        var ta = document.getElementById("prepInput_"+state.modalKey);
+        if(ta){ ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+      });
+    }
+    var modalDoneBtn = document.getElementById("modalDoneBtn");
+    if(modalDoneBtn){
+      modalDoneBtn.addEventListener("click", function(){
+        flushActivePrepEdit();
+        state.modalEditing = false;
+        render();
+      });
+    }
+    document.querySelectorAll(".prep-input").forEach(function(ta){
+      var pt;
+      ta.addEventListener("input", function(){
+        clearTimeout(pt);
+        var key = ta.dataset.prepkey;
+        var val = ta.value;
+        var st = document.getElementById("prepSaveState_"+key);
+        if(st) st.textContent = "保存中…";
+        pt = setTimeout(function(){
+          prep[key] = val;
+          savePrep(state.eventId, prep);
+          if(st) st.textContent = "保存しました";
+        }, 350);
+      });
+    });
+    var back = document.getElementById("backBtn");
+    if(back){
+      back.addEventListener("click", function(){
+        state.selectedNo = null;
+        render();
+      });
+    }
+    var noteInput = document.getElementById("noteInput");
+    if(noteInput){
+      var t;
+      noteInput.addEventListener("input", function(){
+        clearTimeout(t);
+        var val = noteInput.value;
+        var st = document.getElementById("saveState");
+        if(st) st.textContent = "保存中…";
+        t = setTimeout(function(){
+          notes[state.selectedNo] = val;
+          saveNotes(state.eventId, notes);
+          if(st) st.textContent = "保存しました";
+        }, 350);
+      });
+    }
+    var freeMemoInput = document.getElementById("freeMemoInput");
+    if(freeMemoInput){
+      var t2;
+      freeMemoInput.addEventListener("input", function(){
+        clearTimeout(t2);
+        var val = freeMemoInput.value;
+        var st2 = document.getElementById("freeSaveState");
+        if(st2) st2.textContent = "保存中…";
+        t2 = setTimeout(function(){
+          saveFreeMemo(state.eventId, val);
+          if(st2) st2.textContent = "保存しました";
+        }, 350);
+      });
+    }
+  }
+
+  document.querySelectorAll(".tab-btn").forEach(function(b){
+    b.addEventListener("click", function(){
+      state.tab = b.dataset.tab;
+      if(state.tab !== "search"){ state.selectedNo = null; }
+      render();
+      window.scrollTo(0,0);
+    });
+  });
+
+  homeBtn.addEventListener("click", backToHome);
+
+  render();
+})();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>
