@@ -747,6 +747,52 @@
     font-size:11px;
   }
 
+  /* pricing tab */
+  .pricing-intro{
+    font-size:13px;
+    color:var(--text-muted);
+    line-height:1.7;
+    margin:0 0 16px;
+  }
+  .price-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px 16px 6px;
+    margin-bottom:12px;
+    box-shadow:var(--shadow);
+  }
+  .price-cat{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    color:var(--accent);
+    margin:0 0 4px;
+  }
+  .price-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    padding:9px 0;
+    border-top:1px solid var(--border);
+  }
+  .price-row.first{border-top:none;}
+  .pi-name{
+    font-size:14px;
+    color:var(--text);
+    line-height:1.5;
+  }
+  .pi-price{
+    flex:none;
+    font-family:"JetBrains Mono",monospace;
+    font-weight:700;
+    font-size:13px;
+    color:var(--text-muted);
+    text-align:right;
+    white-space:nowrap;
+  }
+
   /* memo tab */
   .free-memo-box{
     background:var(--surface);
@@ -976,6 +1022,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.5V17l11-11 3.5 3.5-11 11H4z"/><line x1="13" y1="7.5" x2="16.5" y2="11"/></svg>
       メモ
     </button>
+    <button class="tab-btn" data-tab="pricing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.3 15.2c0 1 1 1.8 2.7 1.8s2.7-.7 2.7-1.9c0-2.6-5.4-1.2-5.4-3.7 0-1.2 1.1-1.9 2.7-1.9s2.7.7 2.7 1.7"/></svg>
+      見積り
+    </button>
   </nav>
 </div>
 
@@ -1075,6 +1125,61 @@
     37: "案件の紹介・下請けベースの話なので、見積りは案件内容次第です。",
     38: "案件の紹介・下請けベースの話なので、見積りは案件内容次第です。"
   };
+
+  var PRICING = [
+    {
+      cat: "ホームページ制作",
+      items: [
+        {name:"LP（ランディングページ）1枚もの", price:"10万〜30万円"},
+        {name:"コーポレートサイト（5〜10ページ程度）", price:"30万〜60万円"},
+        {name:"予約・お問い合わせ機能付きサイト", price:"40万〜80万円"},
+        {name:"EC機能（オンライン販売）付きサイト", price:"60万〜120万円"},
+        {name:"多言語対応（1言語追加ごと）", price:"+15万〜30万円"},
+        {name:"既存サイトのリニューアル", price:"30万〜70万円"},
+        {name:"月額の保守・更新代行", price:"月5,000円〜3万円"}
+      ]
+    },
+    {
+      cat: "業務システム・Webアプリ開発",
+      items: [
+        {name:"単機能の業務管理システム（在庫・予約・顧客管理など）", price:"50万〜100万円"},
+        {name:"複数機能を持つ中規模の業務システム", price:"100万〜250万円"},
+        {name:"複数拠点・外部連携ありの大規模システム", price:"250万円〜（要件次第）"},
+        {name:"既存システムの機能追加・改修", price:"20万〜80万円"},
+        {name:"外部サービスとのAPI連携", price:"20万〜60万円"},
+        {name:"システムの保守・運用サポート", price:"月2万〜10万円"}
+      ]
+    },
+    {
+      cat: "アプリ開発（iOS / Android）",
+      items: [
+        {name:"シンプルな情報閲覧アプリ", price:"80万〜150万円"},
+        {name:"会員登録・DB連携ありのアプリ", price:"150万〜300万円"},
+        {name:"予約・決済・サブスク課金機能付きアプリ", price:"250万〜500万円"},
+        {name:"既存Webサービスのアプリ化（WebView活用）", price:"50万〜120万円"},
+        {name:"ストア申請・リリース代行", price:"5万〜15万円"},
+        {name:"アプリの保守・アップデート対応", price:"月3万〜10万円"}
+      ]
+    },
+    {
+      cat: "AI活用・AI導入",
+      items: [
+        {name:"AIチャットボット（FAQ対応・一次窓口）", price:"30万〜80万円"},
+        {name:"生成AIを使った文書・提案書作成支援ツール", price:"50万〜150万円"},
+        {name:"AI-OCR（書類の自動読み取り・データ化）", price:"60万〜150万円"},
+        {name:"業務自動化（AIを組み込んだ自動処理・仕組み化）", price:"40万〜120万円"},
+        {name:"画像・動画のAI生成活用ツール", price:"40万〜100万円"},
+        {name:"AI導入コンサル・PoC（小規模検証）", price:"20万〜50万円"}
+      ]
+    }
+  ];
+
+  var PRICING_NOTES = [
+    "ここに載せているのはあくまで会話の中で使う「ざっくりの目安」です。正式な見積りは要件をヒアリングしてから確定します。",
+    "範囲が広い開発ほど、機能を絞ったスモールスタート（まず一部だけ作る）も提案できます。",
+    "保守・運用費は別途、月額で発生するケースが多いです。",
+    "複数カテゴリを組み合わせる案件（例：HP＋業務システム＋AI）は、それぞれの目安を足し合わせつつ、まとめて依頼する場合の割引も相談可能です。"
+  ];
 
   function notesKey(eventId){ return "koryukai_notes_v1_" + eventId; }
   function freeMemoKey(eventId){ return "koryukai_freememo_v1_" + eventId; }
@@ -1200,6 +1305,8 @@
       main.innerHTML = state.selectedNo ? renderDetail(state.selectedNo) : renderSearch();
     }else if(state.tab === "schedule"){
       main.innerHTML = renderSchedule();
+    }else if(state.tab === "pricing"){
+      main.innerHTML = renderPricingTab();
     }else{
       main.innerHTML = renderMemoTab();
     }
@@ -1512,6 +1619,28 @@
     html += '</ul>';
     html += '</section>';
     html += renderPrepModal();
+    return html;
+  }
+
+  function renderPricingTab(){
+    var html = '<section class="view">';
+    html += '<h2 class="section-title" style="margin-top:2px;">見積り目安一覧</h2>';
+    html += '<p class="pricing-intro">商談中にサッと参照できる、BearsSystemのざっくり価格帯です。案件の規模・仕様で前後します。</p>';
+    PRICING.forEach(function(group){
+      html += '<div class="price-card">';
+      html += '  <p class="price-cat">'+esc(group.cat)+'</p>';
+      group.items.forEach(function(it, i){
+        html += '  <div class="price-row'+(i===0?' first':'')+'"><span class="pi-name">'+esc(it.name)+'</span><span class="pi-price">'+esc(it.price)+'</span></div>';
+      });
+      html += '</div>';
+    });
+    html += '<h2 class="section-title">見積りの考え方</h2>';
+    html += '<ul class="tips">';
+    PRICING_NOTES.forEach(function(t, i){
+      html += '<li><span class="ti">'+(i+1)+'</span><span>'+esc(t)+'</span></li>';
+    });
+    html += '</ul>';
+    html += '</section>';
     return html;
   }
 
