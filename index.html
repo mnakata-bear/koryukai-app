@@ -212,7 +212,6 @@
   .chip[data-p="B"].active{background:var(--pri-b);border-color:var(--pri-b);}
   .chip[data-p="C"].active{background:var(--pri-c);border-color:var(--pri-c);}
   .chip[data-p="D"].active{background:var(--pri-d);border-color:var(--pri-d);}
-  .chip[data-p="none"].active{background:var(--pri-none);border-color:var(--pri-none);}
 
   .group-header{
     display:flex;
@@ -1413,10 +1412,9 @@
   }
 
   function counts(){
-    var c = {A:0,B:0,C:0,D:0,none:0};
+    var c = {A:0,B:0,C:0,D:0};
     DATA.companies.forEach(function(co){
-      var p = priorityOf(co.no);
-      c[p || "none"]++;
+      c[priorityOf(co.no)]++;
     });
     return c;
   }
@@ -1425,8 +1423,7 @@
     var q = state.query.trim();
     return DATA.companies.filter(function(co){
       if(state.filter !== "all"){
-        var p = priorityOf(co.no) || "none";
-        if(p !== state.filter) return false;
+        if(priorityOf(co.no) !== state.filter) return false;
       }
       if(state.hideTalked && talked[co.no]) return false;
       if(!q) return true;
@@ -1461,18 +1458,18 @@
     A: {label:"A：最優先", dot:"var(--pri-a)"},
     B: {label:"B：優先", dot:"var(--pri-b)"},
     C: {label:"C：余裕があれば", dot:"var(--pri-c)"},
-    D: {label:"D：様子見・簡単な挨拶のみ", dot:"var(--pri-d)"},
-    none: {label:"未分類", dot:"var(--pri-none)"}
+    D: {label:"D：様子見・簡単な挨拶のみ", dot:"var(--pri-d)"}
   };
 
   function groupedCompanies(){
-    var groups = {A:[], B:[], C:[], D:[], none:[]};
+    var groups = {A:[], B:[], C:[], D:[]};
     DATA.companies.forEach(function(co){
       if(state.hideTalked && talked[co.no]) return;
-      var p = priorityOf(co.no) || "none";
+      var p = priorityOf(co.no);
+      if(!groups[p]) return;
       groups[p].push(co);
     });
-    return ["A","B","C","D","none"].map(function(k){
+    return ["A","B","C","D"].map(function(k){
       return {key:k, label:GROUP_META[k].label, dot:GROUP_META[k].dot, items:groups[k]};
     }).filter(function(g){ return g.items.length > 0; });
   }
@@ -1484,8 +1481,7 @@
       {k:"A", label:"A", n:c.A},
       {k:"B", label:"B", n:c.B},
       {k:"C", label:"C", n:c.C},
-      {k:"D", label:"D", n:c.D},
-      {k:"none", label:"未分類", n:c.none}
+      {k:"D", label:"D", n:c.D}
     ];
     var isGrouped = (state.filter === "all" && !state.query.trim());
     var html = '';
